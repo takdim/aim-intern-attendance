@@ -4,6 +4,17 @@
   <h3 class="mb-1">Absensi Hari Ini</h3>
   <p class="page-subtitle">Check-in {{ setting.check_in_time.strftime('%H:%M') }} | Check-out {{ setting.check_out_time.strftime('%H:%M') }} | {{ setting.timezone }}</p>
 </div>
+
+<div class="card card-soft mb-3">
+  <div class="card-body d-flex flex-wrap gap-2 justify-content-between align-items-center">
+    <div>
+      <div class="metric-label mb-1">Status Lokasi</div>
+      <div id="geo-status" class="page-subtitle">Belum aktif</div>
+    </div>
+    <button type="button" id="enable-location" class="btn btn-primary">Aktifkan Lokasi</button>
+  </div>
+</div>
+
 <div class="row g-3">
   <div class="col-md-6">
     <div class="card card-soft"><div class="card-body">
@@ -31,6 +42,75 @@
 {% endblock %}
 {% block scripts %}
 <script>
+  function setAllGeo(lat, lng) {
+    const pairs = [
+      ['checkin-lat', 'checkin-lng'],
+      ['checkout-lat', 'checkout-lng']
+    ];
+    for (const [latId, lngId] of pairs) {
+      const latEl = document.getElementById(latId);
+      const lngEl = document.getElementById(lngId);
+      if (latEl && lngEl) {
+        latEl.value = String(lat);
+        lngEl.value = String(lng);
+      }
+    }
+  }
+
+  function updateGeoStatus(text, isError) {
+    const el = document.getElementById('geo-status');
+    if (!el) return;
+    el.textContent = text;
+    el.style.color = isError ? '#ba1a1a' : '#1f2937';
+  }
+
+  function requestLocation() {
+    if (!navigator.geolocation) {
+      updateGeoStatus('Browser tidak mendukung geolocation', true);
+      return;
+    }
+
+    updateGeoStatus('Meminta akses lokasi...', false);
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const accuracy = Math.round(pos.coords.accuracy || 0);
+        setAllGeo(lat, lng);
+        updateGeoStatus('Aktif. Akurasi sekitar ' + accuracy + ' m', false);
+      },
+      function(err) {
+        if (err && err.code === 1) {
+          updateGeoStatus('Izin lokasi ditolak. Aktifkan dari pengaturan browser.', true);
+          return;
+        }
+        updateGeoStatus('Gagal mengambil lokasi. Coba lagi.', true);
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  }
+
+  const enableBtn = document.getElementById('enable-location');
+  if (enableBtn) {
+    enableBtn.addEventListener('click', requestLocation);
+  }
+
+  if (navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+      if (result.state === 'granted') {
+        requestLocation();
+      } else if (result.state === 'prompt') {
+        updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+      } else {
+        updateGeoStatus('Izin lokasi diblokir. Ubah di browser lalu coba lagi.', true);
+      }
+    }).catch(function() {
+      updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+    });
+  } else {
+    updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+  }
+
   fillGeo('checkin-form', 'checkin-lat', 'checkin-lng');
   fillGeo('checkout-form', 'checkout-lat', 'checkout-lng');
 </script>
