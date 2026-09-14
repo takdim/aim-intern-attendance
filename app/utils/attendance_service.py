@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from typing import Optional, Tuple
 
 from flask import current_app
@@ -6,7 +6,7 @@ from flask import current_app
 from app.extensions import db
 from app.models import Attendance, AttendanceSetting, LeaveRequest, Zone
 from app.utils.geo import haversine_meters
-from app.utils.time_utils import now_in_tz
+from app.utils.time_utils import now_in_tz, parse_time
 
 
 def get_effective_setting() -> AttendanceSetting:
@@ -72,6 +72,43 @@ def can_checkout_early(user_id: int, target_date: date, current_time) -> bool:
     return current_time >= leave.planned_checkout
 
 
+def auto_close_checkout_if_due() -> int:
+    setting = get_effective_setting()
+    now = now_in_tz(setting.timezone)
+    target_date = now.date()
+    auto_close_time = parse_time(
+        current_app.config.get("AUTO_CLOSE_CHECKOUT_TIME", "18:00"), time(18, 0)
+    )
+
+    if now.time() < auto_close_time:
+        return 0
+
+    auto_checkout_dt = datetime.combine(target_date, auto_close_time)
+
+    rows = (
+        Attendance.query.filter(
+            Attendance.date == target_date,
+            Attendance.check_in.isnot(None),
+            Attendance.check_out.is_(None),
+        )
+        .order_by(Attendance.id.asc())
+        .all()
+    )
+
+    for row in rows:
+        row.check_out = auto_checkout_dt
+        row.notes = (
+            f"{row.notes}\nAuto checkout pada {auto_close_time.strftime('%H:%M')}"
+            if row.notes
+            else f"Auto checkout pada {auto_close_time.strftime('%H:%M')}"
+        )
+
+    if rows:
+        db.session.commit()
+
+    return len(rows)
+
+
 def check_in(user, lat: float, lng: float):
     setting = get_effective_setting()
     now = now_in_tz(setting.timezone)
@@ -127,15 +164,13 @@ def check_out(user, lat: float, lng: float):
 
     tolerance = float(current_app.config.get("LOCATION_TOLERANCE_METERS", 0))
     zone, distance = resolve_zone_and_distance(lat, lng, tolerance)
-    if not zone:
-        if distance is not None:
-            return False, f"Lokasi di luar zona absensi. Jarak terdekat: {distance:.1f} m"
-        return False, "Lokasi di luar zona absensi"
 
     attendance.check_out = now.replace(tzinfo=None)
     attendance.check_out_latitude = lat
     attendance.check_out_longitude = lng
     attendance.check_out_distance = distance
+    if zone and not attendance.zone_id:
+        attendance.zone_id = zone.id
     if can_early:
         attendance.status = "PULANG_CEPAT"
 

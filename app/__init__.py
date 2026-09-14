@@ -30,6 +30,12 @@ def create_app() -> Flask:
     app.register_blueprint(staff_bp)
     app.register_blueprint(intern_bp)
 
+    @app.before_request
+    def run_auto_checkout() -> None:
+        from app.utils.attendance_service import auto_close_checkout_if_due
+
+        auto_close_checkout_if_due()
+
     @app.cli.command("init-db")
     def init_db() -> None:
         db.create_all()
@@ -64,6 +70,13 @@ def create_app() -> Flask:
 
         db.session.commit()
         print("ALPHA marking finished")
+
+    @app.cli.command("auto-close-checkout")
+    def auto_close_checkout() -> None:
+        from app.utils.attendance_service import auto_close_checkout_if_due
+
+        total = auto_close_checkout_if_due()
+        print(f"Auto checkout processed: {total}")
 
     @app.cli.command("create-admin")
     @click.option("--name", required=True, help="Nama admin")
