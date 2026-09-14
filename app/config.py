@@ -9,3 +9,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_TIME_LIMIT = None
     LOCATION_TOLERANCE_METERS = float(os.getenv("LOCATION_TOLERANCE_METERS", "15"))
+    AUTO_CLOSE_CHECKOUT_TIME = os.getenv("AUTO_CLOSE_CHECKOUT_TIME", "18:00")
+    MAX_CONTENT_LENGTH = int(os.getenv("MAX_CONTENT_LENGTH", str(2 * 1024 * 1024)))
+    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
+    ALLOWED_ATTACHMENT_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "doc", "docx"}

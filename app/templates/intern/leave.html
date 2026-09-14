@@ -5,7 +5,7 @@
   <p class="page-subtitle">Ajukan izin sakit atau pulang cepat dan pantau statusnya.</p>
 </div>
 <div class="card card-soft mb-3"><div class="card-body">
-<form method="post" class="row g-3">
+<form method="post" enctype="multipart/form-data" class="row g-3">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div class="col-md-4"><label class="form-label">Jenis Izin</label>
     <select class="form-select" name="request_type">
@@ -17,16 +17,17 @@
   <div class="col-md-4"><label class="form-label">Tanggal Mulai</label><input type="date" class="form-control" name="start_date" required></div>
   <div class="col-md-4"><label class="form-label">Tanggal Selesai</label><input type="date" class="form-control" name="end_date" required></div>
   <div class="col-md-4"><label class="form-label">Jam Pulang Rencana (opsional)</label><input type="time" class="form-control" name="planned_checkout"></div>
+  <div class="col-md-8"><label class="form-label">Lampiran (PDF/JPG/PNG/DOC/DOCX, maks 2MB)</label><input type="file" class="form-control" name="attachment"></div>
   <div class="col-12"><label class="form-label">Alasan</label><textarea class="form-control" name="reason" rows="3" required></textarea></div>
   <div class="col-12"><button class="btn btn-success">Kirim Pengajuan</button></div>
 </form>
 </div></div>
 <div class="table-responsive card card-soft p-2">
 <table class="table table-striped m-0">
-<thead><tr><th>Jenis</th><th>Periode</th><th>Status</th><th>Catatan Reviewer</th></tr></thead>
+<thead><tr><th>Jenis</th><th>Periode</th><th>Status</th><th>Lampiran</th><th>Catatan Reviewer</th></tr></thead>
 <tbody>
 {% for row in leave_requests %}
-<tr><td>{{ row.request_type }}</td><td>{{ row.start_date }} s/d {{ row.end_date }}</td><td>{{ row.status }}</td><td>{{ row.review_notes or '-' }}</td></tr>
+<tr><td>{{ row.request_type }}</td><td>{{ row.start_date }} s/d {{ row.end_date }}</td><td>{{ row.status }}</td><td>{{ 'Ada' if row.attachment else '-' }}</td><td>{{ row.review_notes or '-' }}</td></tr>
 {% endfor %}
 </tbody>
 </table>

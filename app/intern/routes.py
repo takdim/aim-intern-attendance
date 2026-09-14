@@ -1,16 +1,27 @@
 from datetime import datetime
+from pathlib import Path
+from uuid import uuid4
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user
+from werkzeug.utils import secure_filename
 
 from app.extensions import db
 from app.models import Attendance, LeaveRequest
 from app.utils.attendance_service import check_in, check_out, get_effective_setting
+from app.utils.audit import log_action
 from app.utils.decorators import role_required
 from app.utils.time_utils import now_in_tz
 
 
 intern_bp = Blueprint("intern", __name__, url_prefix="/intern")
+
+
+def _allowed_attachment(filename: str) -> bool:
+    if "." not in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1].lower()
+    return ext in current_app.config.get("ALLOWED_ATTACHMENT_EXTENSIONS", set())
 
 
 @intern_bp.route("/dashboard")
@@ -89,6 +100,22 @@ def leave():
             datetime.strptime(planned_checkout_raw, "%H:%M").time() if planned_checkout_raw else None
         )
 
+        attachment_path = None
+        attachment_file = request.files.get("attachment")
+        if attachment_file and attachment_file.filename:
+            if not _allowed_attachment(attachment_file.filename):
+                flash("Format lampiran tidak diizinkan", "danger")
+                return redirect(url_for("intern.leave"))
+
+            safe_name = secure_filename(attachment_file.filename)
+            suffix = safe_name.rsplit(".", 1)[1].lower()
+            generated_name = f"leave_{current_user.id}_{uuid4().hex}.{suffix}"
+            upload_dir = Path(current_app.config["UPLOAD_FOLDER"]) / "leave_attachments"
+            upload_dir.mkdir(parents=True, exist_ok=True)
+            target = upload_dir / generated_name
+            attachment_file.save(target)
+            attachment_path = str(target)
+
         leave_request = LeaveRequest(
             user_id=current_user.id,
             request_type=request_type,
@@ -96,10 +123,22 @@ def leave():
             end_date=end_date,
             planned_checkout=planned_checkout,
             reason=request.form.get("reason", "").strip(),
+            attachment=attachment_path,
             status="PENDING",
         )
 
         db.session.add(leave_request)
+        log_action(
+            actor_user_id=current_user.id,
+            action="CREATE_LEAVE_REQUEST",
+            entity="leave_requests",
+            metadata={
+                "request_type": request_type,
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat(),
+                "has_attachment": bool(attachment_path),
+            },
+        )
         db.session.commit()
         flash("Pengajuan izin berhasil dikirim", "success")
         return redirect(url_for("intern.leave"))

@@ -2,8 +2,44 @@
 {% block content %}
 <div class="page-header">
 	<h3 class="mb-1">Rekap Kehadiran</h3>
-	<p class="page-subtitle">Ringkasan data kehadiran untuk pemantauan tim staff.</p>
+	<p class="page-subtitle">Ringkasan laporan per hari, minggu, atau bulan.</p>
 </div>
+
+<div class="d-flex justify-content-end mb-3">
+	<a class="btn btn-outline-primary" href="{{ url_for('staff.export_reports_excel', period=period, anchor=anchor_date.isoformat()) }}">Export Excel</a>
+</div>
+
+<div class="card card-soft mb-3">
+	<div class="card-body">
+		<form method="get" class="row g-3 align-items-end">
+			<div class="col-md-3">
+				<label class="form-label">Periode</label>
+				<select name="period" class="form-select">
+					<option value="day" {% if period == 'day' %}selected{% endif %}>Per Hari</option>
+					<option value="week" {% if period == 'week' %}selected{% endif %}>Per Minggu</option>
+					<option value="month" {% if period == 'month' %}selected{% endif %}>Per Bulan</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<label class="form-label">Tanggal Acuan</label>
+				<input type="date" name="anchor" class="form-control" value="{{ anchor_date.isoformat() }}">
+			</div>
+			<div class="col-md-3">
+				<button class="btn btn-primary">Terapkan Filter</button>
+			</div>
+			<div class="col-md-3 text-md-end">
+				<span class="badge-soft">{{ start_date }} s/d {{ end_date }}</span>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="row g-3 mb-3">
+	<div class="col-6 col-lg-4"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Total Record</p><p class="metric-value">{{ total_records }}</p></div></div></div>
+	<div class="col-6 col-lg-4"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Hadir</p><p class="metric-value">{{ hadir_count }}</p></div></div></div>
+	<div class="col-12 col-lg-4"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Terlambat</p><p class="metric-value">{{ terlambat_count }}</p></div></div></div>
+</div>
+
 <div class="table-responsive card card-soft p-2">
 <table class="table table-striped m-0">
 <thead><tr><th>Tanggal</th><th>Nama</th><th>Status</th></tr></thead>
@@ -11,6 +47,9 @@
 {% for row in attendances %}
 <tr><td>{{ row.date }}</td><td>{{ row.user.name }}</td><td>{{ row.status }}</td></tr>
 {% endfor %}
+{% if not attendances %}
+<tr><td colspan="3" class="text-center py-4">Belum ada data pada periode ini.</td></tr>
+{% endif %}
 </tbody>
 </table>
 </div>

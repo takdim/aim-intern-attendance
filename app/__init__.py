@@ -1,4 +1,5 @@
 from datetime import time
+from pathlib import Path
 
 import click
 from flask import Flask
@@ -11,6 +12,7 @@ from app.models import AttendanceSetting, Role, User
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
+    Path(app.config["UPLOAD_FOLDER"]).mkdir(parents=True, exist_ok=True)
 
     db.init_app(app)
     csrf.init_app(app)

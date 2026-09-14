@@ -3,10 +3,59 @@
 <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
   <div>
     <h3 class="m-0">Laporan Kehadiran</h3>
-    <p class="page-subtitle">Rekap administrasi absensi yang siap diekspor ke CSV.</p>
+    <p class="page-subtitle">Rekap administrasi dengan filter periode, status, peserta, divisi, dan instansi.</p>
   </div>
-  <a class="btn btn-outline-success" href="{{ url_for('admin.export_reports_csv') }}">Export CSV</a>
+  <div class="d-flex gap-2 flex-wrap">
+    <a class="btn btn-outline-success" href="{{ url_for('admin.export_reports_csv', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">Export CSV</a>
+    <a class="btn btn-outline-primary" href="{{ url_for('admin.export_reports_excel', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">Export Excel</a>
+    <a class="btn btn-primary" href="{{ url_for('admin.export_reports_pdf', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">Export PDF</a>
+  </div>
 </div>
+
+<div class="card card-soft mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-2">
+        <label class="form-label">Periode</label>
+        <select name="period" class="form-select">
+          <option value="day" {% if filters.period == 'day' %}selected{% endif %}>Per Hari</option>
+          <option value="week" {% if filters.period == 'week' %}selected{% endif %}>Per Minggu</option>
+          <option value="month" {% if filters.period == 'month' %}selected{% endif %}>Per Bulan</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Tanggal Acuan</label>
+        <input type="date" name="anchor" class="form-control" value="{{ filters.anchor_date.isoformat() }}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        <input class="form-control" name="status" value="{{ filters.status }}" placeholder="HADIR / TERLAMBAT">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Instansi</label>
+        <input class="form-control" name="institution" value="{{ filters.institution }}" placeholder="Nama instansi">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Divisi/Prodi</label>
+        <input class="form-control" name="department" value="{{ filters.department }}" placeholder="Divisi/Prodi">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Peserta</label>
+        <select class="form-select" name="user_id">
+          <option value="">Semua</option>
+          {% for user in users %}
+          <option value="{{ user.id }}" {% if filters.user_id == (user.id|string) %}selected{% endif %}>{{ user.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12 d-flex justify-content-between align-items-center">
+        <button class="btn btn-primary">Terapkan Filter</button>
+        <span class="badge-soft">{{ filters.start_date }} s/d {{ filters.end_date }}</span>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="table-responsive card card-soft p-2">
 <table class="table table-striped m-0">
 <thead><tr><th>Tanggal</th><th>Nama</th><th>Status</th><th>Masuk</th><th>Pulang</th></tr></thead>
@@ -20,6 +69,9 @@
   <td>{{ row.check_out.strftime('%H:%M') if row.check_out else '-' }}</td>
 </tr>
 {% endfor %}
+{% if not attendances %}
+<tr><td colspan="5" class="text-center py-4">Belum ada data pada filter ini.</td></tr>
+{% endif %}
 </tbody>
 </table>
 </div>
