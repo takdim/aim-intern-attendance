@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 180px);">
+  <div class="col-lg-5 col-md-7">
+    <div class="card card-soft">
+      <div class="card-body p-4 p-lg-5">
+        <p class="text-uppercase small mb-2" style="letter-spacing:.08em;color:#45464d;">Intern Attendance</p>
+        <h3 class="mb-2">Masuk Ke Sistem</h3>
+        <p class="text-muted mb-4">Kelola absensi PKL dan magang dengan validasi lokasi yang presisi.</p>
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label class="form-label">Email atau Username</label>
+            <input class="form-control" name="identity" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" required>
+          </div>
+          <button class="btn btn-success w-100 py-2">Masuk</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

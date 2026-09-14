@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h3 class="mb-1">Pengaturan Absensi</h3>
+  <p class="page-subtitle">Atur jam masuk, jam pulang, toleransi, dan timezone server.</p>
+</div>
+<div class="card card-soft"><div class="card-body">
+<form method="post" class="row g-3">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="col-md-3"><label class="form-label">Jam Masuk</label><input type="time" class="form-control" name="check_in_time" value="{{ setting.check_in_time.strftime('%H:%M') }}" required></div>
+  <div class="col-md-3"><label class="form-label">Jam Pulang</label><input type="time" class="form-control" name="check_out_time" value="{{ setting.check_out_time.strftime('%H:%M') }}" required></div>
+  <div class="col-md-3"><label class="form-label">Toleransi Terlambat (menit)</label><input type="number" class="form-control" name="late_tolerance_minutes" value="{{ setting.late_tolerance_minutes }}" required></div>
+  <div class="col-md-3"><label class="form-label">Timezone</label><input class="form-control" name="timezone" value="{{ setting.timezone }}" required></div>
+  <div class="col-12"><button class="btn btn-success">Simpan Pengaturan</button></div>
+</form>
+</div></div>
+{% endblock %}

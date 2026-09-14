@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h3 class="mb-1">Approval Izin</h3>
+  <p class="page-subtitle">Setujui atau tolak pengajuan izin peserta.</p>
+</div>
+<div class="table-responsive card card-soft p-2">
+<table class="table table-striped m-0">
+<thead><tr><th>Nama</th><th>Jenis</th><th>Periode</th><th>Status</th><th>Alasan</th><th>Aksi</th></tr></thead>
+<tbody>
+{% for row in leave_requests %}
+<tr>
+  <td>{{ row.user.name }}</td>
+  <td>{{ row.request_type }}</td>
+  <td>{{ row.start_date }} s/d {{ row.end_date }}</td>
+  <td>{{ row.status }}</td>
+  <td>{{ row.reason }}</td>
+  <td>
+    {% if row.status == 'PENDING' %}
+    <form method="post" action="{{ url_for('staff.review_leave_request', request_id=row.id) }}" class="d-flex gap-1">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input class="form-control form-control-sm" name="review_notes" placeholder="Catatan">
+      <button class="btn btn-sm btn-success" name="decision" value="APPROVE">Approve</button>
+      <button class="btn btn-sm btn-danger" name="decision" value="REJECT">Reject</button>
+    </form>
+    {% else %}
+    -
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

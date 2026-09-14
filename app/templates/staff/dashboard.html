@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
+  <div>
+    <h3 class="mb-1">Dashboard Staff</h3>
+    <p class="page-subtitle">Monitoring operasional harian peserta PKL dan magang.</p>
+  </div>
+  <span class="badge-soft">Operational View</span>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-2"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Total Peserta</p><p class="metric-value">{{ total_intern }}</p></div></div></div>
+  <div class="col-6 col-lg-2"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Sudah Absen</p><p class="metric-value">{{ already_check_in }}</p></div></div></div>
+  <div class="col-6 col-lg-2"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Belum Absen</p><p class="metric-value">{{ not_check_in }}</p></div></div></div>
+  <div class="col-6 col-lg-2"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Terlambat</p><p class="metric-value">{{ late }}</p></div></div></div>
+  <div class="col-6 col-lg-2"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Izin</p><p class="metric-value">{{ izin }}</p></div></div></div>
+  <div class="col-6 col-lg-2"><div class="card card-soft metric-card"><div class="card-body"><p class="metric-label mb-2">Sakit</p><p class="metric-value">{{ sakit }}</p></div></div></div>
+</div>
+<div class="table-responsive card card-soft p-2">
+  <table class="table table-striped m-0">
+    <thead><tr><th>Nama</th><th>Masuk</th><th>Pulang</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for row in attendance_today %}
+      <tr>
+        <td>{{ row.user.name }}</td>
+        <td>{{ row.check_in.strftime('%H:%M') if row.check_in else '-' }}</td>
+        <td>{{ row.check_out.strftime('%H:%M') if row.check_out else '-' }}</td>
+        <td>{{ row.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h3 class="mb-1">Data Absensi</h3>
+  <p class="page-subtitle">Histori kehadiran seluruh peserta berdasarkan tanggal dan status.</p>
+</div>
+<div class="table-responsive card card-soft p-2">
+<table class="table table-striped m-0">
+<thead><tr><th>Tanggal</th><th>Nama</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Zona</th></tr></thead>
+<tbody>
+{% for row in attendances %}
+<tr>
+  <td>{{ row.date }}</td>
+  <td>{{ row.user.name }}</td>
+  <td>{{ row.check_in.strftime('%H:%M') if row.check_in else '-' }}</td>
+  <td>{{ row.check_out.strftime('%H:%M') if row.check_out else '-' }}</td>
+  <td>{{ row.status }}</td>
+  <td>{{ row.zone.name if row.zone else '-' }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

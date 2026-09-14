@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
+  <div>
+    <h3 class="m-0">Manajemen User</h3>
+    <p class="page-subtitle">Kelola akun Admin, Staff, dan Peserta PKL.</p>
+  </div>
+  <a class="btn btn-success" href="{{ url_for('admin.create_user') }}">Tambah User</a>
+</div>
+<div class="table-responsive card card-soft p-2">
+  <table class="table table-striped align-middle m-0">
+    <thead><tr><th>Nama</th><th>Email</th><th>Username</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.role.name }}</td>
+        <td>{{ 'Aktif' if user.is_active else 'Nonaktif' }}</td>
+        <td class="d-flex gap-1">
+          <a class="btn btn-sm btn-primary" href="{{ url_for('admin.edit_user', user_id=user.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus user ini?')">Hapus</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

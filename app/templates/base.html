@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or "Sistem Absensi PKL" }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='theme.css') }}" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container-fluid px-3 px-lg-4">
+    <a class="navbar-brand brand" href="{{ url_for('main.index') }}">Absensi PKL</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="menu" class="collapse navbar-collapse">
+      {% if current_user.is_authenticated %}
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if current_user.role.name == 'ADMIN' %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.users') }}">Users</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.zones') }}">Zones</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.settings') }}">Settings</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.attendance') }}">Attendance</a></li>
+        {% elif current_user.role.name == 'STAFF' %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('staff.dashboard') }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('staff.attendance') }}">Attendance</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('staff.leave_requests') }}">Leave</a></li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('intern.dashboard') }}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('intern.attendance_page') }}">Absensi</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('intern.history') }}">Histori</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('intern.leave') }}">Izin</a></li>
+        {% endif %}
+      </ul>
+      <form method="post" action="{{ url_for('auth.logout') }}" class="d-flex">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-outline-danger btn-sm">Logout</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<main class="container py-4">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function fillGeo(formId, latId, lngId) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      const lat = document.getElementById(latId);
+      const lng = document.getElementById(lngId);
+      if (lat.value && lng.value) return;
+      e.preventDefault();
+      if (!navigator.geolocation) {
+        alert('Browser tidak mendukung geolocation');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        lat.value = pos.coords.latitude;
+        lng.value = pos.coords.longitude;
+        form.submit();
+      }, function() {
+        alert('Izin lokasi diperlukan untuk absensi');
+      });
+    });
+  }
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

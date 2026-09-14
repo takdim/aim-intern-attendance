@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
+  <div>
+    <h3 class="mb-1">Dashboard Peserta</h3>
+    <p class="page-subtitle">Ringkasan status kehadiran hari ini.</p>
+  </div>
+  <span class="badge-soft">Intern Space</span>
+</div>
+<div class="card card-soft mb-3"><div class="card-body">
+  <h5 class="mb-3">Status Hari Ini</h5>
+  {% if today_attendance %}
+  <ul class="list-glass d-grid gap-2">
+    <li>Status: <strong>{{ today_attendance.status }}</strong></li>
+    <li>Masuk: {{ today_attendance.check_in.strftime('%H:%M') if today_attendance.check_in else 'Belum' }}</li>
+    <li>Pulang: {{ today_attendance.check_out.strftime('%H:%M') if today_attendance.check_out else 'Belum' }}</li>
+  </ul>
+  {% else %}
+  <p class="mb-0">Belum ada absensi hari ini.</p>
+  {% endif %}
+</div></div>
+<div class="d-flex gap-2 flex-wrap">
+  <a class="btn btn-success" href="{{ url_for('intern.attendance_page') }}">Halaman Absensi</a>
+  <a class="btn btn-outline-primary" href="{{ url_for('intern.history') }}">Histori Absensi</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('intern.leave') }}">Pengajuan Izin</a>
+</div>
+{% endblock %}

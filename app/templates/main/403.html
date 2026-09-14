@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card card-soft"><div class="card-body">
+	<h3 class="mb-2">Akses Ditolak</h3>
+	<p class="page-subtitle mb-3">Anda tidak memiliki izin untuk membuka halaman ini.</p>
+	<a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Kembali</a>
+</div></div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h3 class="mb-1">Absensi Hari Ini</h3>
+  <p class="page-subtitle">Check-in {{ setting.check_in_time.strftime('%H:%M') }} | Check-out {{ setting.check_out_time.strftime('%H:%M') }} | {{ setting.timezone }}</p>
+</div>
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card card-soft"><div class="card-body">
+      <h5 class="mb-3">Check-in</h5>
+      <form id="checkin-form" method="post" action="{{ url_for('intern.do_check_in') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" id="checkin-lat" name="latitude">
+        <input type="hidden" id="checkin-lng" name="longitude">
+        <button class="btn btn-success w-100 py-2">Absen Masuk</button>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-md-6">
+    <div class="card card-soft"><div class="card-body">
+      <h5 class="mb-3">Check-out</h5>
+      <form id="checkout-form" method="post" action="{{ url_for('intern.do_check_out') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" id="checkout-lat" name="latitude">
+        <input type="hidden" id="checkout-lng" name="longitude">
+        <button class="btn btn-primary w-100 py-2">Absen Pulang</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  fillGeo('checkin-form', 'checkin-lat', 'checkin-lng');
+  fillGeo('checkout-form', 'checkout-lat', 'checkout-lng');
+</script>
+{% endblock %}

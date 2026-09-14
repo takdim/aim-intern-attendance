@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h3 class="mb-1">Zona Absensi</h3>
+  <p class="page-subtitle">Kelola geofence lokasi check-in/check-out peserta.</p>
+</div>
+<div class="card card-soft mb-3"><div class="card-body">
+<form method="post" action="{{ url_for('admin.create_zone') }}" class="row g-2">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="col-md-3"><input class="form-control" name="name" placeholder="Nama Zona" required></div>
+  <div class="col-md-2"><input class="form-control" name="latitude" placeholder="Latitude" required></div>
+  <div class="col-md-2"><input class="form-control" name="longitude" placeholder="Longitude" required></div>
+  <div class="col-md-2"><input class="form-control" name="radius" placeholder="Radius(m)" required></div>
+  <div class="col-md-3"><input class="form-control" name="description" placeholder="Deskripsi"></div>
+  <div class="col-12 form-check"><input class="form-check-input" type="checkbox" name="is_active" checked><label class="form-check-label">Aktif</label></div>
+  <div class="col-12"><button class="btn btn-success">Tambah Zona</button></div>
+</form>
+</div></div>
+<div class="table-responsive card card-soft p-2">
+  <table class="table table-striped m-0">
+    <thead><tr><th>Nama</th><th>Koordinat</th><th>Radius</th><th>Status</th><th>Aksi</th></tr></thead>
+    <tbody>
+    {% for zone in zones %}
+      <tr>
+        <td>{{ zone.name }}</td>
+        <td>{{ zone.latitude }}, {{ zone.longitude }}</td>
+        <td>{{ zone.radius }} m</td>
+        <td>{{ 'Aktif' if zone.is_active else 'Nonaktif' }}</td>
+        <td class="d-flex gap-1 flex-wrap">
+          <a class="btn btn-sm btn-primary" href="{{ url_for('admin.edit_zone', zone_id=zone.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('admin.toggle_zone', zone_id=zone.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-primary">Toggle</button>
+          </form>
+          <form method="post" action="{{ url_for('admin.delete_zone', zone_id=zone.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus zona ini?')">Hapus</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

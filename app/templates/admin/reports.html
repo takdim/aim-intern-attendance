@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
+  <div>
+    <h3 class="m-0">Laporan Kehadiran</h3>
+    <p class="page-subtitle">Rekap administrasi absensi yang siap diekspor ke CSV.</p>
+  </div>
+  <a class="btn btn-outline-success" href="{{ url_for('admin.export_reports_csv') }}">Export CSV</a>
+</div>
+<div class="table-responsive card card-soft p-2">
+<table class="table table-striped m-0">
+<thead><tr><th>Tanggal</th><th>Nama</th><th>Status</th><th>Masuk</th><th>Pulang</th></tr></thead>
+<tbody>
+{% for row in attendances %}
+<tr>
+  <td>{{ row.date }}</td>
+  <td>{{ row.user.name }}</td>
+  <td>{{ row.status }}</td>
+  <td>{{ row.check_in.strftime('%H:%M') if row.check_in else '-' }}</td>
+  <td>{{ row.check_out.strftime('%H:%M') if row.check_out else '-' }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

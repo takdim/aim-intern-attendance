@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+	<h3 class="mb-1">Rekap Kehadiran</h3>
+	<p class="page-subtitle">Ringkasan data kehadiran untuk pemantauan tim staff.</p>
+</div>
+<div class="table-responsive card card-soft p-2">
+<table class="table table-striped m-0">
+<thead><tr><th>Tanggal</th><th>Nama</th><th>Status</th></tr></thead>
+<tbody>
+{% for row in attendances %}
+<tr><td>{{ row.date }}</td><td>{{ row.user.name }}</td><td>{{ row.status }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

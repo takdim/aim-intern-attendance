@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <h3 class="mb-1">Pengajuan Izin</h3>
+  <p class="page-subtitle">Pantau seluruh status permohonan izin peserta.</p>
+</div>
+<div class="table-responsive card card-soft p-2">
+<table class="table table-striped m-0">
+<thead><tr><th>Nama</th><th>Jenis</th><th>Periode</th><th>Status</th><th>Alasan</th></tr></thead>
+<tbody>
+{% for row in leave_requests %}
+<tr>
+  <td>{{ row.user.name }}</td>
+  <td>{{ row.request_type }}</td>
+  <td>{{ row.start_date }} s/d {{ row.end_date }}</td>
+  <td>{{ row.status }}</td>
+  <td>{{ row.reason }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}
