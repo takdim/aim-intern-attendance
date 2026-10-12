@@ -2,8 +2,74 @@
 {% block content %}
 <div class="page-header">
   <h3 class="mb-1">Data Absensi</h3>
-  <p class="page-subtitle">Histori kehadiran seluruh peserta berdasarkan tanggal dan status.</p>
+  <p class="page-subtitle">Histori kehadiran seluruh peserta berdasarkan zona, bulan, tahun, status, dan peserta.</p>
 </div>
+
+<div class="card card-soft mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-md-2">
+        <label class="form-label">Zona</label>
+        <select class="form-select" name="zone_id">
+          <option value="">Semua Zona</option>
+          {% for zone in zones %}
+          <option value="{{ zone.id }}" {% if filters.zone_id == (zone.id|string) %}selected{% endif %}>{{ zone.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Bulan</label>
+        <select class="form-select" name="month">
+          <option value="">Semua Bulan</option>
+          <option value="1" {% if filters.month == '1' %}selected{% endif %}>Januari</option>
+          <option value="2" {% if filters.month == '2' %}selected{% endif %}>Februari</option>
+          <option value="3" {% if filters.month == '3' %}selected{% endif %}>Maret</option>
+          <option value="4" {% if filters.month == '4' %}selected{% endif %}>April</option>
+          <option value="5" {% if filters.month == '5' %}selected{% endif %}>Mei</option>
+          <option value="6" {% if filters.month == '6' %}selected{% endif %}>Juni</option>
+          <option value="7" {% if filters.month == '7' %}selected{% endif %}>Juli</option>
+          <option value="8" {% if filters.month == '8' %}selected{% endif %}>Agustus</option>
+          <option value="9" {% if filters.month == '9' %}selected{% endif %}>September</option>
+          <option value="10" {% if filters.month == '10' %}selected{% endif %}>Oktober</option>
+          <option value="11" {% if filters.month == '11' %}selected{% endif %}>November</option>
+          <option value="12" {% if filters.month == '12' %}selected{% endif %}>Desember</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Tahun</label>
+        <select class="form-select" name="year">
+          <option value="">Semua Tahun</option>
+          {% for year in year_options %}
+          <option value="{{ year }}" {% if filters.year == (year|string) %}selected{% endif %}>{{ year }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+          <option value="">Semua Status</option>
+          {% for status in ['HADIR', 'TERLAMBAT', 'IZIN', 'SAKIT', 'PULANG_CEPAT', 'ALPHA', 'BELUM_ABSEN'] %}
+          <option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Peserta</label>
+        <select class="form-select" name="user_id">
+          <option value="">Semua Peserta</option>
+          {% for user in users %}
+          <option value="{{ user.id }}" {% if filters.user_id == (user.id|string) %}selected{% endif %}>{{ user.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2 d-flex gap-2">
+        <button class="btn btn-primary flex-fill">Terapkan</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('admin.attendance') }}">Reset</a>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="table-responsive card card-soft p-2">
 <table class="table table-striped m-0">
 <thead><tr><th>Tanggal</th><th>Nama</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Zona</th></tr></thead>
@@ -18,6 +84,9 @@
   <td>{{ row.zone.name if row.zone else '-' }}</td>
 </tr>
 {% endfor %}
+{% if not attendances %}
+<tr><td colspan="6" class="text-center py-4">Belum ada data pada filter ini.</td></tr>
+{% endif %}
 </tbody>
 </table>
 </div>

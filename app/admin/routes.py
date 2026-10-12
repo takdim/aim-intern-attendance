@@ -359,12 +359,43 @@ def settings():
 @admin_bp.route("/attendance")
 @role_required("ADMIN")
 def attendance():
-    selected_date = request.args.get("date")
+    filters = {
+        "zone_id": request.args.get("zone_id", "").strip(),
+        "month": request.args.get("month", "").strip(),
+        "year": request.args.get("year", "").strip(),
+        "status": request.args.get("status", "").strip().upper(),
+        "user_id": request.args.get("user_id", "").strip(),
+    }
+
     query = Attendance.query.join(User).filter(User.deleted_at.is_(None))
-    if selected_date:
-        query = query.filter(Attendance.date == datetime.strptime(selected_date, "%Y-%m-%d").date())
+
+    if filters["zone_id"].isdigit():
+        query = query.filter(Attendance.zone_id == int(filters["zone_id"]))
+    if filters["month"].isdigit():
+        month = int(filters["month"])
+        if 1 <= month <= 12:
+            query = query.filter(db.extract("month", Attendance.date) == month)
+    if filters["year"].isdigit():
+        query = query.filter(db.extract("year", Attendance.date) == int(filters["year"]))
+    if filters["status"]:
+        query = query.filter(Attendance.status == filters["status"])
+    if filters["user_id"].isdigit():
+        query = query.filter(Attendance.user_id == int(filters["user_id"]))
+
     rows = query.order_by(Attendance.date.desc(), Attendance.id.desc()).all()
-    return render_template("admin/attendance.html", attendances=rows)
+    zones = Zone.query.order_by(Zone.name.asc()).all()
+    users = User.query.filter(User.deleted_at.is_(None)).order_by(User.name.asc()).all()
+    current_year = _today_in_system_tz().year
+    year_options = list(range(current_year, current_year - 6, -1))
+
+    return render_template(
+        "admin/attendance.html",
+        attendances=rows,
+        filters=filters,
+        zones=zones,
+        users=users,
+        year_options=year_options,
+    )
 
 
 @admin_bp.route("/leave-requests")

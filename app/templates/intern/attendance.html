@@ -65,6 +65,11 @@
   }
 
   function requestLocation() {
+    if (!window.isSecureContext) {
+      updateGeoStatus('Lokasi butuh HTTPS. Di VPS, akses harus pakai domain HTTPS (bukan HTTP/IP).', true);
+      return;
+    }
+
     if (!navigator.geolocation) {
       updateGeoStatus('Browser tidak mendukung geolocation', true);
       return;
@@ -84,6 +89,14 @@
           updateGeoStatus('Izin lokasi ditolak. Aktifkan dari pengaturan browser.', true);
           return;
         }
+        if (err && err.code === 2) {
+          updateGeoStatus('Lokasi tidak tersedia. Pastikan GPS perangkat aktif.', true);
+          return;
+        }
+        if (err && err.code === 3) {
+          updateGeoStatus('Permintaan lokasi timeout. Coba di area sinyal GPS lebih baik.', true);
+          return;
+        }
         updateGeoStatus('Gagal mengambil lokasi. Coba lagi.', true);
       },
       { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
@@ -100,15 +113,27 @@
       if (result.state === 'granted') {
         requestLocation();
       } else if (result.state === 'prompt') {
-        updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+        if (!window.isSecureContext) {
+          updateGeoStatus('Mode tidak aman. Gunakan HTTPS agar browser mengizinkan lokasi.', true);
+        } else {
+          updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+        }
       } else {
         updateGeoStatus('Izin lokasi diblokir. Ubah di browser lalu coba lagi.', true);
       }
     }).catch(function() {
-      updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+      if (!window.isSecureContext) {
+        updateGeoStatus('Mode tidak aman. Gunakan HTTPS agar browser mengizinkan lokasi.', true);
+      } else {
+        updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+      }
     });
   } else {
-    updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+    if (!window.isSecureContext) {
+      updateGeoStatus('Mode tidak aman. Gunakan HTTPS agar browser mengizinkan lokasi.', true);
+    } else {
+      updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
+    }
   }
 
   fillGeo('checkin-form', 'checkin-lat', 'checkin-lng');
