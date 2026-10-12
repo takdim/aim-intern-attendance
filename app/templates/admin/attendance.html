@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="page-header">
-  <h3 class="mb-1">Data Absensi</h3>
-  <p class="page-subtitle">Histori kehadiran seluruh peserta berdasarkan zona, bulan, tahun, status, dan peserta.</p>
+  <h3 class="mb-1">Rekap Mahasiswa</h3>
+  <p class="page-subtitle">Ringkasan jumlah hadir, terlambat, izin, dan status lainnya berdasarkan zona, bulan, tahun, dan mahasiswa.</p>
 </div>
 
 <div class="card card-soft mb-3">
@@ -68,6 +68,41 @@
       </div>
     </form>
   </div>
+</div>
+
+<div class="table-responsive card card-soft p-2 mb-3">
+<h5 class="px-2 pt-2">Ringkasan per Mahasiswa</h5>
+<table class="table table-striped m-0">
+<thead>
+<tr>
+  <th>Nama</th>
+  <th>Total</th>
+  <th>Hadir</th>
+  <th>Terlambat</th>
+  <th>Izin</th>
+  <th>Sakit</th>
+  <th>Pulang Cepat</th>
+  <th>Alpha</th>
+</tr>
+</thead>
+<tbody>
+{% for item in summaries %}
+<tr>
+  <td>{{ item.user.name }}</td>
+  <td>{{ item.total }}</td>
+  <td>{{ item.HADIR }}</td>
+  <td>{{ item.TERLAMBAT }}</td>
+  <td>{{ item.IZIN }}</td>
+  <td>{{ item.SAKIT }}</td>
+  <td>{{ item.PULANG_CEPAT }}</td>
+  <td>{{ item.ALPHA }}</td>
+</tr>
+{% endfor %}
+{% if not summaries %}
+<tr><td colspan="8" class="text-center py-4">Belum ada rekap pada filter ini.</td></tr>
+{% endif %}
+</tbody>
+</table>
 </div>
 
 <div class="table-responsive card card-soft p-2">

@@ -367,7 +367,10 @@ def attendance():
         "user_id": request.args.get("user_id", "").strip(),
     }
 
-    query = Attendance.query.join(User).filter(User.deleted_at.is_(None))
+    query = Attendance.query.join(User).join(Role).filter(
+        User.deleted_at.is_(None),
+        Role.name == "INTERN",
+    )
 
     if filters["zone_id"].isdigit():
         query = query.filter(Attendance.zone_id == int(filters["zone_id"]))
@@ -377,20 +380,56 @@ def attendance():
             query = query.filter(db.extract("month", Attendance.date) == month)
     if filters["year"].isdigit():
         query = query.filter(db.extract("year", Attendance.date) == int(filters["year"]))
-    if filters["status"]:
-        query = query.filter(Attendance.status == filters["status"])
     if filters["user_id"].isdigit():
         query = query.filter(Attendance.user_id == int(filters["user_id"]))
 
+    summary_rows = query.order_by(User.name.asc(), Attendance.date.asc()).all()
+    summary_statuses = ["HADIR", "TERLAMBAT", "IZIN", "SAKIT", "PULANG_CEPAT", "ALPHA", "BELUM_ABSEN"]
+    summary_template = {
+        "total": 0,
+        "HADIR": 0,
+        "TERLAMBAT": 0,
+        "IZIN": 0,
+        "SAKIT": 0,
+        "PULANG_CEPAT": 0,
+        "ALPHA": 0,
+        "BELUM_ABSEN": 0,
+    }
+    users_query = User.query.join(Role).filter(
+        User.deleted_at.is_(None),
+        Role.name == "INTERN",
+    )
+    if filters["user_id"].isdigit():
+        users_query = users_query.filter(User.id == int(filters["user_id"]))
+
+    summaries_by_user = {
+        user.id: {"user": user, **summary_template.copy()}
+        for user in users_query.order_by(User.name.asc()).all()
+    }
+    for row in summary_rows:
+        summary = summaries_by_user[row.user_id]
+        summary["total"] += 1
+        if row.status in summary_statuses:
+            summary[row.status] += 1
+
+    if filters["status"]:
+        query = query.filter(Attendance.status == filters["status"])
+
     rows = query.order_by(Attendance.date.desc(), Attendance.id.desc()).all()
     zones = Zone.query.order_by(Zone.name.asc()).all()
-    users = User.query.filter(User.deleted_at.is_(None)).order_by(User.name.asc()).all()
+    users = (
+        User.query.join(Role)
+        .filter(User.deleted_at.is_(None), Role.name == "INTERN")
+        .order_by(User.name.asc())
+        .all()
+    )
     current_year = _today_in_system_tz().year
     year_options = list(range(current_year, current_year - 6, -1))
 
     return render_template(
         "admin/attendance.html",
         attendances=rows,
+        summaries=summaries_by_user.values(),
         filters=filters,
         zones=zones,
         users=users,
