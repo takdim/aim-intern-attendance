@@ -1,142 +1,239 @@
-{% extends 'base.html' %}
+{% extends 'intern/base_intern.html' %}
 {% block content %}
-<div class="page-header">
-  <h3 class="mb-1">Absensi Hari Ini</h3>
-  <p class="page-subtitle">Check-in {{ setting.check_in_time.strftime('%H:%M') }} | Check-out {{ setting.check_out_time.strftime('%H:%M') }} | {{ setting.timezone }}</p>
-</div>
+<div class="flex flex-col w-full gap-5 select-none">
 
-<div class="card card-soft mb-3">
-  <div class="card-body d-flex flex-wrap gap-2 justify-content-between align-items-center">
+  <!-- Header Banner -->
+  <div class="flex items-center justify-between px-1">
     <div>
-      <div class="metric-label mb-1">Status Lokasi</div>
-      <div id="geo-status" class="page-subtitle">Belum aktif</div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">RADAR GEOFENCE VERIFICATION</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Terminal Presensi PKL</h2>
     </div>
-    <button type="button" id="enable-location" class="btn btn-primary">Aktifkan Lokasi</button>
+    <span class="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-telemetry-sm text-[10px] font-semibold">
+      TERMINAL AKTIF
+    </span>
   </div>
-</div>
 
-<div class="row g-3">
-  <div class="col-md-6">
-    <div class="card card-soft"><div class="card-body">
-      <h5 class="mb-3">Check-in</h5>
-      <form id="checkin-form" method="post" action="{{ url_for('intern.do_check_in') }}">
+  <!-- Radar & Live GPS Beacon Glass Card -->
+  <section class="relative rounded-3xl glass-panel p-5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden">
+    <div class="glass-specular-edge"></div>
+    <div class="absolute -top-16 -left-16 w-52 h-52 rounded-full bg-primary-container/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-16 -right-16 w-56 h-56 rounded-full bg-secondary-container/25 blur-3xl pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col gap-4">
+      <!-- Zone Information Pill -->
+      <div class="flex items-center justify-between p-3 rounded-2xl bg-surface-container-high/60 border border-white/10 backdrop-blur-xl">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary shrink-0">
+            <span class="material-symbols-outlined text-[18px]">location_on</span>
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="font-headline-sm text-xs font-semibold text-on-surface truncate">{{ primary_zone.name if primary_zone else 'Zona Kantor Utama' }}</span>
+            <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant truncate">
+              Radius Kuota: {{ primary_zone.radius|int if primary_zone else 100 }} Meter
+            </span>
+          </div>
+        </div>
+
+        <button type="button" onclick="refreshCoordinates()" class="px-3 py-1.5 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/40 text-primary font-label-telemetry-sm text-[10px] font-bold flex items-center gap-1 active:scale-95 transition-transform">
+          <span class="material-symbols-outlined text-[14px]">my_location</span>
+          Refresh GPS
+        </button>
+      </div>
+
+      <!-- Radar Animation Container -->
+      <div class="relative flex flex-col items-center justify-center my-4">
+        <div class="relative w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center">
+          <!-- Outer Radar Rings -->
+          <div class="absolute inset-0 rounded-full border border-primary/20 animate-ping opacity-25" style="animation-duration: 4s;"></div>
+          <div class="absolute inset-6 rounded-full border border-primary/30"></div>
+          <div class="absolute inset-14 rounded-full border border-dashed border-tertiary/40"></div>
+          <div class="absolute inset-22 rounded-full border border-white/10"></div>
+          
+          <!-- Crosshairs -->
+          <div class="absolute inset-x-0 top-1/2 h-px bg-white/10"></div>
+          <div class="absolute inset-y-0 left-1/2 w-px bg-white/10"></div>
+          
+          <!-- Radar Sweep Beam -->
+          <div class="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+            <div class="w-full h-full bg-gradient-to-tr from-transparent via-primary/20 to-transparent animate-spin" style="animation-duration: 4s;"></div>
+          </div>
+
+          <!-- Radar Center Blip (Intern) -->
+          <div class="relative z-10 w-12 h-12 rounded-full bg-primary/30 border-2 border-primary flex items-center justify-center shadow-[0_0_20px_#4cd7f6] animate-pulse">
+            <span class="material-symbols-outlined text-white text-[20px]">person_pin_circle</span>
+          </div>
+
+          <!-- Target Zone Blip (Office) -->
+          <div class="absolute top-10 right-14 w-4 h-4 rounded-full bg-tertiary border border-white flex items-center justify-center shadow-[0_0_12px_#4edea3]">
+            <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+          </div>
+        </div>
+
+        <!-- Telemetry Status readout -->
+        <div class="mt-2 text-center flex flex-col items-center gap-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse" id="radar-live-dot"></span>
+            <span class="font-label-telemetry-lg text-sm sm:text-base font-bold text-on-surface" id="radar-distance-readout">
+              Mendeteksi Lokasi...
+            </span>
+          </div>
+          <span class="font-label-telemetry-sm text-[10px] uppercase font-semibold text-primary" id="radar-zone-state">
+            MEMERIKSA KOORDINAT GPS
+          </span>
+        </div>
+      </div>
+
+      <!-- Live Coordinates Telemetry Pill -->
+      <div class="grid grid-cols-2 gap-2 text-center">
+        <div class="p-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 flex flex-col gap-0.5">
+          <span class="font-label-telemetry-sm text-[9px] uppercase text-on-surface-variant">Latitude</span>
+          <span class="font-label-telemetry-md text-xs font-semibold text-on-surface" id="telemetry-lat">--.------</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 flex flex-col gap-0.5">
+          <span class="font-label-telemetry-sm text-[9px] uppercase text-on-surface-variant">Longitude</span>
+          <span class="font-label-telemetry-md text-xs font-semibold text-on-surface" id="telemetry-lng">---.------</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Action Triggers (Check-in & Check-out) -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <!-- Card 1: Check In -->
+    <div class="p-4 rounded-3xl glass-panel flex flex-col gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-tertiary/20 border border-tertiary/30 flex items-center justify-center text-tertiary">
+            <span class="material-symbols-outlined text-[18px]">login</span>
+          </div>
+          <div>
+            <h3 class="font-headline-sm text-sm font-bold text-on-surface">Absen Masuk</h3>
+            <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Mulai Shift {{ setting.check_in_time.strftime('%H:%M') }}</span>
+          </div>
+        </div>
+        {% if today_attendance and today_attendance.check_in %}
+          <span class="px-2 py-0.5 rounded-full bg-tertiary/20 text-tertiary font-label-telemetry-sm text-[10px] font-bold">TERCATAT</span>
+        {% endif %}
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-surface-container-high/40 border border-white/5 text-xs text-on-surface-variant flex items-center justify-between">
+        <span>Jam Masuk Tercatat:</span>
+        <strong class="text-on-surface font-label-telemetry-md">{{ today_attendance.check_in.strftime('%H:%M') if today_attendance and today_attendance.check_in else 'Belum Absen' }}</strong>
+      </div>
+
+      <form method="post" action="{{ url_for('intern.do_check_in') }}" id="form-checkin">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="hidden" id="checkin-lat" name="latitude">
-        <input type="hidden" id="checkin-lng" name="longitude">
-        <button class="btn btn-success w-100 py-2">Absen Masuk</button>
+        <input type="hidden" name="latitude" id="checkin-lat-input" value="0">
+        <input type="hidden" name="longitude" id="checkin-lng-input" value="0">
+        <button type="submit" class="w-full py-3 rounded-2xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline-sm text-xs sm:text-sm font-bold shadow-[0_8px_20px_rgba(76,215,246,0.35)] hover:opacity-95 active:scale-95 transition-all disabled:opacity-50" {% if today_attendance and today_attendance.check_in %}disabled{% endif %}>
+          {% if today_attendance and today_attendance.check_in %}
+            Sudah Check-In Hari Ini
+          {% else %}
+            Konfirmasi Absen Masuk
+          {% endif %}
+        </button>
       </form>
-    </div></div>
-  </div>
-  <div class="col-md-6">
-    <div class="card card-soft"><div class="card-body">
-      <h5 class="mb-3">Check-out</h5>
-      <form id="checkout-form" method="post" action="{{ url_for('intern.do_check_out') }}">
+    </div>
+
+    <!-- Card 2: Check Out -->
+    <div class="p-4 rounded-3xl glass-panel flex flex-col gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-secondary/20 border border-secondary/30 flex items-center justify-center text-secondary">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+          </div>
+          <div>
+            <h3 class="font-headline-sm text-sm font-bold text-on-surface">Absen Pulang</h3>
+            <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Selesai Shift {{ setting.check_out_time.strftime('%H:%M') }}</span>
+          </div>
+        </div>
+        {% if today_attendance and today_attendance.check_out %}
+          <span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary font-label-telemetry-sm text-[10px] font-bold">SELESAI</span>
+        {% endif %}
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-surface-container-high/40 border border-white/5 text-xs text-on-surface-variant flex items-center justify-between">
+        <span>Jam Pulang Tercatat:</span>
+        <strong class="text-on-surface font-label-telemetry-md">{{ today_attendance.check_out.strftime('%H:%M') if today_attendance and today_attendance.check_out else 'Belum Absen' }}</strong>
+      </div>
+
+      <form method="post" action="{{ url_for('intern.do_check_out') }}" id="form-checkout">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <input type="hidden" id="checkout-lat" name="latitude">
-        <input type="hidden" id="checkout-lng" name="longitude">
-        <button class="btn btn-primary w-100 py-2">Absen Pulang</button>
+        <input type="hidden" name="latitude" id="checkout-lat-input" value="0">
+        <input type="hidden" name="longitude" id="checkout-lng-input" value="0">
+        <button type="submit" class="w-full py-3 rounded-2xl bg-gradient-to-r from-secondary to-secondary-container text-on-secondary font-headline-sm text-xs sm:text-sm font-bold shadow-[0_8px_20px_rgba(208,188,255,0.35)] hover:opacity-95 active:scale-95 transition-all disabled:opacity-50" {% if not today_attendance or not today_attendance.check_in or today_attendance.check_out %}disabled{% endif %}>
+          {% if today_attendance and today_attendance.check_out %}
+            Sudah Check-Out Hari Ini
+          {% elif not today_attendance or not today_attendance.check_in %}
+            Perlu Check-In Terlebih Dahulu
+          {% else %}
+            Konfirmasi Absen Pulang
+          {% endif %}
+        </button>
       </form>
-    </div></div>
-  </div>
+    </div>
+  </section>
+
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script>
-  function setAllGeo(lat, lng) {
-    const pairs = [
-      ['checkin-lat', 'checkin-lng'],
-      ['checkout-lat', 'checkout-lng']
-    ];
-    for (const [latId, lngId] of pairs) {
-      const latEl = document.getElementById(latId);
-      const lngEl = document.getElementById(lngId);
-      if (latEl && lngEl) {
-        latEl.value = String(lat);
-        lngEl.value = String(lng);
-      }
-    }
-  }
+  const ZONE = {
+    lat: {{ primary_zone.latitude if primary_zone else -5.147665 }},
+    lng: {{ primary_zone.longitude if primary_zone else 119.432731 }},
+    radius: {{ primary_zone.radius if primary_zone else 100 }}
+  };
 
-  function updateGeoStatus(text, isError) {
-    const el = document.getElementById('geo-status');
-    if (!el) return;
-    el.textContent = text;
-    el.style.color = isError ? '#ba1a1a' : '#1f2937';
-  }
+  const distEl = document.getElementById('radar-distance-readout');
+  const stateEl = document.getElementById('radar-zone-state');
+  const latEl = document.getElementById('telemetry-lat');
+  const lngEl = document.getElementById('telemetry-lng');
+  const inLat = document.getElementById('checkin-lat-input');
+  const inLng = document.getElementById('checkin-lng-input');
+  const outLat = document.getElementById('checkout-lat-input');
+  const outLng = document.getElementById('checkout-lng-input');
 
-  function requestLocation() {
-    if (!window.isSecureContext) {
-      updateGeoStatus('Lokasi butuh HTTPS. Di VPS, akses harus pakai domain HTTPS (bukan HTTP/IP).', true);
-      return;
-    }
-
+  function refreshCoordinates() {
     if (!navigator.geolocation) {
-      updateGeoStatus('Browser tidak mendukung geolocation', true);
+      if (stateEl) stateEl.textContent = 'GEOLOCATION TIDAK DIDUKUNG';
       return;
     }
+    if (distEl) distEl.textContent = 'Mencari Sinyal GPS...';
 
-    updateGeoStatus('Meminta akses lokasi...', false);
     navigator.geolocation.getCurrentPosition(
-      function(pos) {
+      (pos) => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
-        const accuracy = Math.round(pos.coords.accuracy || 0);
-        setAllGeo(lat, lng);
-        updateGeoStatus('Aktif. Akurasi sekitar ' + accuracy + ' m', false);
+        latEl.textContent = lat.toFixed(6);
+        lngEl.textContent = lng.toFixed(6);
+
+        inLat.value = lat;
+        inLng.value = lng;
+        outLat.value = lat;
+        outLng.value = lng;
+
+        const distance = haversineMeters(lat, lng, ZONE.lat, ZONE.lng);
+        distEl.textContent = `Jarak: ${distance} Meter`;
+
+        if (distance <= ZONE.radius) {
+          stateEl.textContent = 'DALAM RADIUS KANTOR • KOORDINAT VALID';
+          stateEl.className = 'font-label-telemetry-sm text-[10px] uppercase font-bold text-tertiary';
+        } else {
+          stateEl.textContent = `DI LUAR RADIUS KANTOR (+${distance - ZONE.radius}m)`;
+          stateEl.className = 'font-label-telemetry-sm text-[10px] uppercase font-bold text-secondary';
+        }
       },
-      function(err) {
-        if (err && err.code === 1) {
-          updateGeoStatus('Izin lokasi ditolak. Aktifkan dari pengaturan browser.', true);
-          return;
-        }
-        if (err && err.code === 2) {
-          updateGeoStatus('Lokasi tidak tersedia. Pastikan GPS perangkat aktif.', true);
-          return;
-        }
-        if (err && err.code === 3) {
-          updateGeoStatus('Permintaan lokasi timeout. Coba di area sinyal GPS lebih baik.', true);
-          return;
-        }
-        updateGeoStatus('Gagal mengambil lokasi. Coba lagi.', true);
+      (err) => {
+        distEl.textContent = 'Akses Lokasi Diblokir';
+        stateEl.textContent = 'IZIN GPS DIBUTUHKAN DI PENGATURAN BROWSER';
+        stateEl.className = 'font-label-telemetry-sm text-[10px] uppercase font-bold text-error';
       },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 }
     );
   }
 
-  const enableBtn = document.getElementById('enable-location');
-  if (enableBtn) {
-    enableBtn.addEventListener('click', requestLocation);
-  }
-
-  if (navigator.permissions && navigator.permissions.query) {
-    navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
-      if (result.state === 'granted') {
-        requestLocation();
-      } else if (result.state === 'prompt') {
-        if (!window.isSecureContext) {
-          updateGeoStatus('Mode tidak aman. Gunakan HTTPS agar browser mengizinkan lokasi.', true);
-        } else {
-          updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
-        }
-      } else {
-        updateGeoStatus('Izin lokasi diblokir. Ubah di browser lalu coba lagi.', true);
-      }
-    }).catch(function() {
-      if (!window.isSecureContext) {
-        updateGeoStatus('Mode tidak aman. Gunakan HTTPS agar browser mengizinkan lokasi.', true);
-      } else {
-        updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
-      }
-    });
-  } else {
-    if (!window.isSecureContext) {
-      updateGeoStatus('Mode tidak aman. Gunakan HTTPS agar browser mengizinkan lokasi.', true);
-    } else {
-      updateGeoStatus('Klik "Aktifkan Lokasi" untuk mulai.', false);
-    }
-  }
-
-  fillGeo('checkin-form', 'checkin-lat', 'checkin-lng');
-  fillGeo('checkout-form', 'checkout-lat', 'checkout-lng');
+  refreshCoordinates();
+  setInterval(refreshCoordinates, 12000);
 </script>
 {% endblock %}

@@ -1,35 +1,193 @@
-{% extends 'base.html' %}
+{% extends 'intern/base_intern.html' %}
 {% block content %}
-<div class="page-header">
-  <h3 class="mb-1">Pengajuan Izin</h3>
-  <p class="page-subtitle">Ajukan izin sakit atau pulang cepat dan pantau statusnya.</p>
-</div>
-<div class="card card-soft mb-3"><div class="card-body">
-<form method="post" enctype="multipart/form-data" class="row g-3">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <div class="col-md-4"><label class="form-label">Jenis Izin</label>
-    <select class="form-select" name="request_type">
-      <option value="SAKIT">SAKIT</option>
-      <option value="PULANG_CEPAT">PULANG_CEPAT</option>
-      <option value="IZIN">IZIN</option>
-    </select>
+<div class="flex flex-col w-full gap-5 select-none">
+
+  <!-- Header Banner -->
+  <div class="flex items-center justify-between px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">DIGITAL CLEARANCE & DISPENSATION</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Pengajuan Izin & Sakit</h2>
+    </div>
+    <span class="px-2.5 py-1 rounded-full bg-secondary/10 border border-secondary/30 text-secondary font-label-telemetry-sm text-[10px] font-semibold">
+      PORTAL DISPENSASI
+    </span>
   </div>
-  <div class="col-md-4"><label class="form-label">Tanggal Mulai</label><input type="date" class="form-control" name="start_date" required></div>
-  <div class="col-md-4"><label class="form-label">Tanggal Selesai</label><input type="date" class="form-control" name="end_date" required></div>
-  <div class="col-md-4"><label class="form-label">Jam Pulang Rencana (opsional)</label><input type="time" class="form-control" name="planned_checkout"></div>
-  <div class="col-md-8"><label class="form-label">Lampiran (PDF/JPG/PNG/DOC/DOCX, maks 2MB)</label><input type="file" class="form-control" name="attachment"></div>
-  <div class="col-12"><label class="form-label">Alasan</label><textarea class="form-control" name="reason" rows="3" required></textarea></div>
-  <div class="col-12"><button class="btn btn-success">Kirim Pengajuan</button></div>
-</form>
-</div></div>
-<div class="table-responsive card card-soft p-2">
-<table class="table table-striped m-0">
-<thead><tr><th>Jenis</th><th>Periode</th><th>Status</th><th>Lampiran</th><th>Catatan Reviewer</th></tr></thead>
-<tbody>
-{% for row in leave_requests %}
-<tr><td>{{ row.request_type }}</td><td>{{ row.start_date }} s/d {{ row.end_date }}</td><td>{{ row.status }}</td><td>{{ 'Ada' if row.attachment else '-' }}</td><td>{{ row.review_notes or '-' }}</td></tr>
-{% endfor %}
-</tbody>
-</table>
+
+  <!-- New Leave Application Glass Card Form -->
+  <section class="relative rounded-3xl glass-panel p-5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden">
+    <div class="glass-specular-edge"></div>
+    <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-primary-container/20 blur-3xl pointer-events-none"></div>
+    
+    <div class="relative z-10 flex flex-col gap-4">
+      <div class="flex items-center gap-2 border-b border-white/10 pb-3">
+        <div class="w-8 h-8 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-[18px]">post_add</span>
+        </div>
+        <div>
+          <h3 class="font-headline-sm text-sm sm:text-base font-bold text-on-surface">Formulir Pengajuan Baru</h3>
+          <p class="font-body-sm text-[11px] text-on-surface-variant">Ajukan dispensasi ke mentor dan supervisor magang.</p>
+        </div>
+      </div>
+
+      <form method="post" enctype="multipart/form-data" class="flex flex-col gap-3.5" id="leave-main-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- Request Type Selector Buttons -->
+        <div class="flex flex-col gap-1.5">
+          <label class="font-label-telemetry-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Jenis Dispensasi</label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="relative flex flex-col items-center justify-center p-2.5 rounded-2xl bg-surface-container-high/60 border border-white/10 cursor-pointer hover:border-primary/50 transition-all has-[:checked]:bg-primary/20 has-[:checked]:border-primary has-[:checked]:text-primary text-center">
+              <input type="radio" name="request_type" value="SAKIT" class="sr-only" checked onchange="toggleCheckoutTime(this.value)">
+              <span class="material-symbols-outlined text-lg mb-0.5">medical_services</span>
+              <span class="font-headline-sm text-xs font-semibold">Sakit</span>
+            </label>
+
+            <label class="relative flex flex-col items-center justify-center p-2.5 rounded-2xl bg-surface-container-high/60 border border-white/10 cursor-pointer hover:border-primary/50 transition-all has-[:checked]:bg-primary/20 has-[:checked]:border-primary has-[:checked]:text-primary text-center">
+              <input type="radio" name="request_type" value="PULANG_CEPAT" class="sr-only" onchange="toggleCheckoutTime(this.value)">
+              <span class="material-symbols-outlined text-lg mb-0.5">door_open</span>
+              <span class="font-headline-sm text-xs font-semibold">Pulang Cepat</span>
+            </label>
+
+            <label class="relative flex flex-col items-center justify-center p-2.5 rounded-2xl bg-surface-container-high/60 border border-white/10 cursor-pointer hover:border-primary/50 transition-all has-[:checked]:bg-primary/20 has-[:checked]:border-primary has-[:checked]:text-primary text-center">
+              <input type="radio" name="request_type" value="IZIN" class="sr-only" onchange="toggleCheckoutTime(this.value)">
+              <span class="material-symbols-outlined text-lg mb-0.5">event_note</span>
+              <span class="font-headline-sm text-xs font-semibold">Izin Lainnya</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Date Range -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label class="flex flex-col gap-1">
+            <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Tanggal Mulai</span>
+            <input type="date" name="start_date" class="px-3 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" required id="form-start-date"/>
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Tanggal Selesai</span>
+            <input type="date" name="end_date" class="px-3 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" required id="form-end-date"/>
+          </label>
+        </div>
+
+        <!-- Planned Checkout Time (Conditional) -->
+        <div id="checkout-time-group" class="hidden flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Jam Pulang Rencana (Opsional)</span>
+          <input type="time" name="planned_checkout" class="px-3 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]"/>
+        </div>
+
+        <!-- Reason -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Keterangan Alasan</span>
+          <textarea name="reason" rows="3" class="px-3 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] resize-none" placeholder="Jelaskan keperluan atau keterangan sakit Anda secara detail..." required></textarea>
+        </label>
+
+        <!-- Attachment Upload Dropzone -->
+        <div class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Lampiran Bukti (Surat Dokter / Dokumen Kampus, maks 2MB)</span>
+          <div class="p-3.5 rounded-xl bg-surface-container-lowest/60 border border-dashed border-white/15 hover:border-primary/50 text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
+            <input type="file" name="attachment" class="w-full text-xs text-on-surface file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 cursor-pointer"/>
+            <span class="font-label-telemetry-sm text-[9px] text-on-surface-variant">Format didukung: PDF, JPG, PNG, DOC, DOCX</span>
+          </div>
+        </div>
+
+        <button type="submit" class="mt-2 py-3 rounded-2xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline-sm text-xs sm:text-sm font-bold shadow-[0_8px_20px_rgba(76,215,246,0.35)] hover:opacity-95 active:scale-95 transition-all">
+          Kirimkan Pengajuan Izin
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- My Leave Requests History Stream -->
+  <section class="flex flex-col gap-2.5 pb-4">
+    <div class="flex items-center justify-between px-1">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[18px]">history_edu</span>
+        <h3 class="font-headline-sm text-xs sm:text-sm text-on-surface font-semibold">Status Pengajuan Anda</h3>
+      </div>
+      <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">{{ leave_requests|length }} Terdata</span>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      {% if leave_requests %}
+        {% for row in leave_requests %}
+          <div class="relative overflow-hidden rounded-2xl glass-panel p-4 shadow-[0_6px_20px_rgba(0,0,0,0.4)]">
+            <div class="glass-specular-edge"></div>
+            
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-headline-sm text-sm font-bold text-on-surface">
+                    {{ row.request_type | replace('_', ' ') }}
+                  </span>
+                </div>
+                <div class="text-xs text-on-surface-variant flex items-center gap-1.5 mb-1.5">
+                  <span class="material-symbols-outlined text-[14px]">calendar_month</span>
+                  <span>{{ row.start_date.strftime('%d %b %Y') }} s/d {{ row.end_date.strftime('%d %b %Y') }}</span>
+                  {% if row.planned_checkout %}
+                    <span>• Pulang: {{ row.planned_checkout.strftime('%H:%M') }}</span>
+                  {% endif %}
+                </div>
+                
+                <p class="text-xs text-on-surface bg-surface-container-lowest/60 p-2.5 rounded-xl border border-white/5 break-words">
+                  "{{ row.reason }}"
+                </p>
+
+                <!-- Reviewer Notes if processed -->
+                {% if row.review_notes %}
+                  <div class="mt-2 text-xs text-on-surface-variant p-2 rounded-lg bg-surface-container-high/40 border border-white/10">
+                    <span class="font-semibold text-primary">Catatan Peninjau:</span> {{ row.review_notes }}
+                  </div>
+                {% endif %}
+
+                {% if row.attachment %}
+                  <div class="mt-2 flex items-center gap-1 text-[11px] text-primary">
+                    <span class="material-symbols-outlined text-[15px]">attachment</span>
+                    <span>Lampiran Tersedia</span>
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Status Badge -->
+              <div class="shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold font-label-telemetry-sm border {% if row.status == 'APPROVED' %}bg-tertiary-container/30 border-tertiary/40 text-tertiary shadow-[0_0_12px_rgba(27,189,133,0.25)]{% elif row.status == 'REJECTED' %}bg-error-container/40 border-error/40 text-error shadow-[0_0_12px_rgba(255,180,171,0.2)]{% else %}bg-secondary-container/30 border-secondary/40 text-secondary shadow-[0_0_12px_rgba(196,171,255,0.2)]{% endif %}">
+                <span class="w-1.5 h-1.5 rounded-full {% if row.status == 'APPROVED' %}bg-tertiary{% elif row.status == 'REJECTED' %}bg-error{% else %}bg-secondary{% endif %}"></span>
+                {{ row.status }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="p-8 rounded-3xl glass-panel text-center flex flex-col items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-4xl text-on-surface-variant">assignment_turned_in</span>
+          <h4 class="font-headline-sm text-sm font-semibold text-on-surface">Belum Ada Pengajuan</h4>
+          <p class="text-xs text-on-surface-variant max-w-xs">
+            Gunakan formulir di atas untuk mengajukan izin sakit atau dispensasi kegiatan kampus.
+          </p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function toggleCheckoutTime(val) {
+    const group = document.getElementById('checkout-time-group');
+    if (!group) return;
+    if (val === 'PULANG_CEPAT') {
+      group.classList.remove('hidden');
+      group.classList.add('flex');
+    } else {
+      group.classList.add('hidden');
+      group.classList.remove('flex');
+    }
+  }
+
+  // Pre-fill today's date
+  const today = new Date().toISOString().split('T')[0];
+  const sDate = document.getElementById('form-start-date');
+  const eDate = document.getElementById('form-end-date');
+  if (sDate) sDate.value = today;
+  if (eDate) eDate.value = today;
+</script>
 {% endblock %}

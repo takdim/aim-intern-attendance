@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><title>Aether PKL - Admin Console</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-container":"#c4abff","secondary-container":"#571bc1","error-container":"#93000a","secondary":"#d0bcff","background":"#0e1321","on-tertiary-fixed":"#002113","surface-container-high":"#252a39","on-error":"#690005","on-tertiary-fixed-variant":"#005236","inverse-on-surface":"#2b303f","outline":"#869397","surface-variant":"#303444","surface-container-highest":"#303444","outline-variant":"#3d494c","error":"#ffb4ab","surface-bright":"#343948","surface-tint":"#4cd7f6","inverse-surface":"#dee2f6","on-secondary-fixed-variant":"#5516be","primary-container":"#06b6d4","on-secondary-fixed":"#23005c","tertiary-container":"#1bbd85","inverse-primary":"#00687a","on-primary":"#003640","tertiary":"#4edea3","on-secondary":"#3c0091","tertiary-fixed":"#6ffbbe","on-tertiary":"#003824","on-surface-variant":"#bcc9cd","on-primary-fixed-variant":"#004e5c","tertiary-fixed-dim":"#4edea3","on-tertiary-container":"#00452e","primary-fixed-dim":"#4cd7f6","on-background":"#dee2f6","on-primary-fixed":"#001f26","on-primary-container":"#00424f","surface-container-lowest":"#090e1c","primary":"#4cd7f6","on-error-container":"#ffdad6","surface-container-low":"#161b2a","secondary-fixed-dim":"#d0bcff","secondary-fixed":"#e9ddff","surface-container":"#1a1f2e","surface-dim":"#0e1321","on-surface":"#dee2f6","primary-fixed":"#acedff","surface":"#0e1321"},borderRadius:{DEFAULT:"1rem",lg:"2rem",xl:"3rem",full:"9999px"},spacing:{"margin-desktop":"3rem",gutter:"1rem",margin:"1.25rem","space-sm":"0.5rem","gutter-desktop":"2rem","space-md":"1rem","space-xs":"0.25rem","space-xl":"2.5rem","gutter-tablet":"1.5rem","margin-tablet":"2rem","space-lg":"1.5rem"},fontFamily:{"headline-lg":["Space Grotesk"],"body-sm":["Inter"],"display-hero":["Space Grotesk"],"body-md":["Inter"],"headline-sm":["Space Grotesk"],"label-telemetry-sm":["JetBrains Mono"],"label-telemetry-lg":["JetBrains Mono"],"label-telemetry-md":["JetBrains Mono"],"body-lg":["Inter"],"display-hero-mobile":["Space Grotesk"],"headline-md":["Space Grotesk"],"headline-lg-mobile":["Space Grotesk"]},fontSize:{"headline-lg":["36px",{lineHeight:"44px",letterSpacing:"-0.03em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"400"}],"display-hero":["56px",{lineHeight:"64px",letterSpacing:"-0.04em",fontWeight:"700"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"headline-sm":["18px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"500"}],"label-telemetry-sm":["10px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"500"}],"label-telemetry-lg":["16px",{lineHeight:"20px",letterSpacing:"0.04em",fontWeight:"600"}],"label-telemetry-md":["12px",{lineHeight:"16px",letterSpacing:"0.06em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"24px",letterSpacing:"-0.01em",fontWeight:"400"}],"display-hero-mobile":["38px",{lineHeight:"44px",letterSpacing:"-0.03em",fontWeight:"700"}],"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["28px",{lineHeight:"34px",letterSpacing:"-0.02em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-on-primary"><div class="fixed inset-0 pointer-events-none overflow-hidden z-0"><div class="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[140px]"></div><div class="absolute top-1/3 -right-20 w-[500px] h-[500px] bg-secondary-container/20 rounded-full blur-[130px]"></div><div class="absolute -bottom-40 left-1/3 w-[700px] h-[700px] bg-tertiary-container/10 rounded-full blur-[150px]"></div></div><header class="fixed top-0 w-full z-50 bg-surface-container-lowest/70 backdrop-blur-3xl shadow-[0_4px_30px_rgba(0,0,0,0.5)]"><div class="h-20 w-full px-margin-desktop mx-auto flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-lg flex-shrink-0"><div class="flex items-center gap-space-md"><div class="w-10 h-10 rounded-full bg-surface-container-high/80 flex items-center justify-center shadow-[0_0_20px_rgba(76,215,246,0.3)]"><span class="material-symbols-outlined text-primary text-[22px]">radar</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">AETHER<span class="text-primary">.PKL</span></span><span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Admin Console // v4.8</span></div></div><div class="hidden xl:flex items-center gap-space-sm pl-space-md"><div class="flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-high/60 backdrop-blur-md"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">NODE: MKS-08</span></div><div class="flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-high/60 backdrop-blur-md"><span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary">WITA (UTC+8)</span><span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface">09:41:22</span></div><div class="px-space-sm py-space-xs rounded-full bg-secondary-container/40"><span class="font-label-telemetry-sm text-label-telemetry-sm text-secondary">SUPERADMIN</span></div></div></div><nav class="hidden lg:flex items-center gap-space-xs bg-surface-container-low/60 backdrop-blur-2xl p-space-xs rounded-full shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)]" data-active-classes="bg-primary-container text-on-primary-container rounded-full"><a class="px-space-md py-space-xs rounded-full text-on-surface-variant font-body-sm text-body-sm transition-all duration-200 hover:bg-surface-container-high hover:text-on-surface" data-path="overview" href="#">Overview</a><a aria-current="page" class="px-space-md py-space-xs font-body-sm transition-all duration-200 bg-primary-container text-on-primary-container rounded-full" data-path="geofence-and-zones" href="#">Geofence &amp; Zones</a><a class="px-space-md py-space-xs rounded-full text-on-surface-variant font-body-sm text-body-sm transition-all duration-200 hover:bg-surface-container-high hover:text-on-surface" data-path="attendance-rules" href="#">Attendance Rules</a><a class="px-space-md py-space-xs rounded-full text-on-surface-variant font-body-sm text-body-sm transition-all duration-200 hover:bg-surface-container-high hover:text-on-surface" data-path="intern-and-user-deck" href="#">Intern &amp; User Deck</a><a class="px-space-md py-space-xs rounded-full text-on-surface-variant font-body-sm text-body-sm transition-all duration-200 hover:bg-surface-container-high hover:text-on-surface" data-path="audit-logs" href="#">Audit Logs</a><a class="px-space-md py-space-xs rounded-full text-on-surface-variant font-body-sm text-body-sm transition-all duration-200 hover:bg-surface-container-high hover:text-on-surface" data-path="system-settings" href="#">Settings</a></nav><div class="flex items-center gap-space-md flex-shrink-0"><div class="hidden md:flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-surface-container-high/40 backdrop-blur-md"><span class="material-symbols-outlined text-tertiary text-[16px]">wifi_tethering</span><span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface">GPS MESH 99.8%</span></div><button aria-label="Notifications" class="w-9 h-9 rounded-full bg-surface-container-high/60 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_12px_rgba(76,215,246,0.5)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="hidden 2xl:flex flex-col text-left"><span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Dr. Hendra Gunawan</span><span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">Head of Internship</span></div></div></div></div></header><main class="relative z-10 w-full pt-20 bg-transparent min-h-screen"><div class="flex flex-col w-full">
+<div class="w-full max-w-7xl mx-auto px-gutter-tablet md:px-margin-desktop py-space-md space-y-space-xl">
+<!-- 1. Executive Header & Sub-Bar -->
+<section class="flex flex-col gap-space-lg">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md bg-surface-container-low/70 backdrop-blur-3xl p-space-lg rounded-lg shadow-xl shadow-black/30">
+<div class="flex flex-col gap-space-xs">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="font-label-telemetry-sm text-label-telemetry-sm uppercase text-on-surface-variant tracking-wider">Aether Core</span>
+<span class="text-on-surface-variant font-body-sm text-body-sm">/</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm uppercase text-primary tracking-wider">Geofence &amp; Governance Engine</span>
+<div class="inline-flex items-center gap-space-xs px-space-sm py-0.5 rounded-full bg-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary uppercase">LIVE RTK ENGINE ACTIVE</span>
+</div>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">
+            Pusat Pengawasan <span class="text-primary font-semibold">Geofencing &amp; Presensi</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+            Sistem validasi perimeter presensi berbasis real-time RTK GPS, biometrik WebAuthn, dan pencegah spoofing untuk siswa program PKL &amp; magang riset.
+          </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm self-start lg:self-center">
+<div class="flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-inner shadow-white/5">
+<span class="material-symbols-outlined text-primary text-[18px]">cell_tower</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface font-medium">14ms latency</span>
+<span class="text-on-surface-variant font-label-telemetry-sm text-label-telemetry-sm">• Asia/Makassar (WITA UTC+8)</span>
+</div>
+<button class="flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-primary text-on-primary font-body-sm text-body-sm font-semibold shadow-lg shadow-primary/25 hover:brightness-110 active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span>Sinkronkan Node</span>
+</button>
+</div>
+</div>
+<!-- Quick KPI Stats Bar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- KPI 1 -->
+<div class="relative overflow-hidden p-space-md rounded-lg bg-surface-container-low/60 backdrop-blur-2xl shadow-xl shadow-black/40 flex flex-col justify-between group hover:bg-surface-container-high/60 transition-all">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Zona Geofence Aktif</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">radar</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-display-hero text-headline-lg font-bold text-on-surface">3</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Cluster Terdaftar</span>
+</div>
+<p class="font-label-telemetry-sm text-label-telemetry-sm text-primary mt-space-xs truncate">
+              MKS-01, Lab AI, Balai Diklat
+            </p>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="relative overflow-hidden p-space-md rounded-lg bg-surface-container-low/60 backdrop-blur-2xl shadow-xl shadow-black/40 flex flex-col justify-between group hover:bg-surface-container-high/60 transition-all">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-tertiary/10 rounded-full blur-2xl group-hover:bg-tertiary/20 transition-colors"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Peserta Terdaftar</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">group</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-display-hero text-headline-lg font-bold text-on-surface">128</span>
+<span class="font-body-md text-body-md text-tertiary font-medium">94% In-Zone</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 mt-space-xs overflow-hidden">
+<div class="bg-tertiary h-full rounded-full transition-all duration-500" style="width: 94%;"></div>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="relative overflow-hidden p-space-md rounded-lg bg-surface-container-low/60 backdrop-blur-2xl shadow-xl shadow-black/40 flex flex-col justify-between group hover:bg-surface-container-high/60 transition-all">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-secondary/15 rounded-full blur-2xl group-hover:bg-secondary/25 transition-colors"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Aturan Shift Reguler</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-label-telemetry-lg text-label-telemetry-lg font-bold text-on-surface">07:30 - 16:00</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">WITA</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-space-xs">
+              Toleransi Keterlambatan: 15 Menit
+            </p>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="relative overflow-hidden p-space-md rounded-lg bg-surface-container-low/60 backdrop-blur-2xl shadow-xl shadow-black/40 flex flex-col justify-between group hover:bg-surface-container-high/60 transition-all">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-tertiary/10 rounded-full blur-2xl group-hover:bg-tertiary/20 transition-colors"></div>
+<div class="flex items-center justify-between">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Status Spoofing GPS</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+</div>
+<div class="mt-space-md">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-display-hero text-headline-lg font-bold text-tertiary">0</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Anomali Terdeteksi</span>
+</div>
+<p class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant mt-space-xs">
+              Mock GPS Guard: <span class="text-tertiary font-semibold uppercase">STRICT ENFORCED</span>
+</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 2. Core Module 1: Interactive Geofence Map View & Floating Config Deck -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">satellite_alt</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">Visualisasi Spasial &amp; Konfigurasi Geofence</h2>
+</div>
+<div class="hidden sm:flex items-center gap-space-xs font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">
+<span>BASE COORD:</span>
+<span class="text-primary font-medium">-5.123400, 119.123400</span>
+</div>
+</div>
+<!-- Map + Floating Deck Composite Container -->
+<div class="relative w-full h-[640px] rounded-lg overflow-hidden bg-surface-container-lowest shadow-2xl shadow-black/60">
+<!-- Interactive Vector High-Tech Map Canvas Background -->
+<div class="absolute inset-0 bg-surface-container-lowest overflow-hidden">
+<!-- Cyber Vector Grid Canvas Layer -->
+<svg class="absolute inset-0 w-full h-full opacity-35" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="40" id="geo-grid" patternunits="userSpaceOnUse" width="40">
+<path class="text-primary" d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="0.5"></path>
+<circle class="text-primary" cx="40" cy="40" fill="currentColor" opacity="0.6" r="1"></circle>
+</pattern>
+<radialgradient cx="50%" cy="50%" id="geofence-glow" r="50%">
+<stop offset="0%" stop-color="#4cd7f6" stop-opacity="0.35"></stop>
+<stop offset="70%" stop-color="#4cd7f6" stop-opacity="0.12"></stop>
+<stop offset="100%" stop-color="#4cd7f6" stop-opacity="0"></stop>
+</radialgradient>
+</defs>
+<rect fill="url(#geo-grid)" height="100%" width="100%"></rect>
+</svg>
+<!-- Topographic Contour Lines Simulation -->
+<svg class="absolute inset-0 w-full h-full opacity-20 pointer-events-none" preserveaspectratio="none" viewbox="0 0 1000 600">
+<path d="M 0,150 Q 250,90 500,200 T 1000,120" fill="none" stroke="#4cd7f6" stroke-dasharray="4 6" stroke-width="1.2"></path>
+<path d="M 0,320 Q 300,420 620,280 T 1000,340" fill="none" stroke="#4edea3" stroke-width="1"></path>
+<path d="M 120,0 Q 220,300 450,550 T 950,600" fill="none" stroke="#d0bcff" stroke-dasharray="8 8" stroke-width="0.8"></path>
+</svg>
+<!-- Center Geofence Anchor Perimeter (Kantor Utama Makassar) -->
+<div class="absolute top-[48%] left-[62%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+<!-- Pulsing Rings -->
+<div class="absolute w-[280px] h-[280px] rounded-full border border-primary/40 bg-primary/5 animate-pulse transition-all duration-300" id="geofence-radius-ring-outer"></div>
+<div class="absolute w-[200px] h-[200px] rounded-full bg-primary/10 shadow-[0_0_50px_rgba(76,215,246,0.25)] transition-all duration-300" id="geofence-radius-ring-inner"></div>
+<!-- Radar Sweep Beam -->
+<div class="absolute w-[280px] h-[280px] rounded-full overflow-hidden opacity-60">
+<div class="w-full h-full origin-center animate-[spin_6s_linear_infinite]" style="background: conic-gradient(from 0deg, rgba(76,215,246,0.3) 0deg, transparent 60deg, transparent 360deg);"></div>
+</div>
+<!-- Central Anchor Beacon Marker -->
+<div class="relative z-10 w-9 h-9 rounded-full bg-surface-container-high/90 backdrop-blur-md flex items-center justify-center shadow-lg shadow-primary/50 ring-2 ring-primary">
+<span class="material-symbols-outlined text-primary text-[20px]">corporate_fare</span>
+<span class="absolute -bottom-6 whitespace-nowrap px-space-xs py-0.5 rounded bg-surface-container-lowest/90 font-label-telemetry-sm text-label-telemetry-sm text-primary">
+                Kantor Pusat MKS (R: <span id="label-radius-display">100</span>m)
+              </span>
+</div>
+</div>
+<!-- Live Mock Intern Presence Dots in Map View -->
+<!-- Farah Nabila: 42m away (IN-ZONE) -->
+<div class="absolute top-[44%] left-[58%] group cursor-pointer transition-transform hover:scale-125 z-10">
+<div class="relative flex items-center justify-center">
+<span class="absolute w-5 h-5 rounded-full bg-tertiary/30 animate-ping"></span>
+<span class="w-3.5 h-3.5 rounded-full bg-tertiary shadow-[0_0_12px_#4edea3]"></span>
+</div>
+<!-- Tooltip -->
+<div class="hidden group-hover:flex flex-col absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-space-xs rounded bg-surface-container-high/95 backdrop-blur-md shadow-lg shadow-black/50 whitespace-nowrap z-30">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Farah Nabila</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary">42m • TERVERIFIKASI IN-ZONE</span>
+</div>
+</div>
+<!-- Rizky Pratama: 88m away (IN-ZONE edge) -->
+<div class="absolute top-[54%] left-[68%] group cursor-pointer transition-transform hover:scale-125 z-10">
+<div class="relative flex items-center justify-center">
+<span class="w-3.5 h-3.5 rounded-full bg-tertiary shadow-[0_0_12px_#4edea3]"></span>
+</div>
+<div class="hidden group-hover:flex flex-col absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-space-xs rounded bg-surface-container-high/95 backdrop-blur-md shadow-lg shadow-black/50 whitespace-nowrap z-30">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Rizky Pratama</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary">88m • PRESENSI TERCATAT</span>
+</div>
+</div>
+<!-- Dimas: 145m away (OUT-OF-ZONE with warning pulse) -->
+<div class="absolute top-[65%] left-[76%] group cursor-pointer transition-transform hover:scale-125 z-10">
+<div class="relative flex items-center justify-center">
+<span class="absolute w-6 h-6 rounded-full bg-error/30 animate-ping"></span>
+<span class="w-3.5 h-3.5 rounded-full bg-error shadow-[0_0_12px_#ffb4ab]"></span>
+</div>
+<div class="hidden group-hover:flex flex-col absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-space-xs rounded bg-surface-container-high/95 backdrop-blur-md shadow-lg shadow-black/50 whitespace-nowrap z-30">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Dimas Wahyu</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-error">145m • OUT-OF-ZONE (+45m)</span>
+</div>
+</div>
+<!-- Top-Right Map HUD Controls -->
+<div class="absolute top-space-md right-space-md flex flex-col gap-space-xs z-20">
+<div class="flex items-center gap-space-xs p-1 rounded-full bg-surface-container-low/80 backdrop-blur-xl shadow-lg shadow-black/40">
+<button aria-label="Satellite Vector" class="px-space-sm py-1 rounded-full bg-primary text-on-primary font-label-telemetry-sm text-label-telemetry-sm font-semibold shadow-sm" type="button">
+                RTK VECTOR
+              </button>
+<button aria-label="Satellite Photo" class="px-space-sm py-1 rounded-full text-on-surface-variant hover:text-on-surface font-label-telemetry-sm text-label-telemetry-sm transition-colors" type="button">
+                SATELIT
+              </button>
+<button aria-label="3D Tilt View" class="w-7 h-7 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">view_in_ar</span>
+</button>
+</div>
+<div class="flex flex-col self-end rounded-full bg-surface-container-low/80 backdrop-blur-xl shadow-lg shadow-black/40 p-1">
+<button aria-label="Zoom In" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<div class="w-full h-px bg-surface-container-highest my-0.5"></div>
+<button aria-label="Zoom Out" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+</div>
+</div>
+<!-- Bottom Telemetry Watermark in Map -->
+<div class="absolute bottom-space-md right-space-md hidden sm:flex items-center gap-space-sm px-space-md py-space-xs rounded-full bg-surface-container-lowest/80 backdrop-blur-md font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant z-10">
+<span>HDOP: 0.8</span>
+<span>•</span>
+<span>SATS LOCKED: 18/24</span>
+<span>•</span>
+<span class="text-tertiary">RTK FIXED</span>
+</div>
+</div>
+<!-- Floating Translucent Control Panel (Docked Over Left Map Side) -->
+<div class="relative sm:absolute top-auto sm:top-space-md left-auto sm:left-space-md bottom-auto sm:bottom-space-md w-full sm:w-[380px] p-space-md rounded-lg bg-surface-container-low/85 backdrop-blur-3xl shadow-2xl shadow-black/80 flex flex-col justify-between overflow-y-auto z-20">
+<div class="flex flex-col gap-space-md">
+<!-- Header of Float Deck -->
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Parameter Geofence</span>
+</div>
+<span class="font-label-telemetry-sm text-label-telemetry-sm px-space-xs py-0.5 rounded bg-primary/10 text-primary uppercase">ZONE-MKS-01</span>
+</div>
+<!-- Zone Selector -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase" for="zone-select">Pilih Lokasi Operasional</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-high/90 text-on-surface font-body-sm text-body-sm px-space-md py-space-sm rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary transition-all" id="zone-select">
+<option selected="">Kantor Utama Makassar (Gedung A &amp; Lab AI)</option>
+<option>Lab Inovasi Digital Bira</option>
+<option>Balai Diklat Industri Makassar</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[18px]">expand_more</span>
+</div>
+</div>
+<!-- Coordinate Inputs -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Koordinat Pusat (WGS84)</label>
+<button class="flex items-center gap-space-xs text-primary font-label-telemetry-sm text-label-telemetry-sm hover:underline" id="btn-pin-gps" type="button">
+<span class="material-symbols-outlined text-[14px]">my_location</span>
+<span>Pin GPS Saat Ini</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-space-xs">
+<div class="bg-surface-container-high/80 rounded-DEFAULT p-space-xs flex flex-col">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">LATITUDE</span>
+<input class="bg-transparent text-on-surface font-label-telemetry-md text-label-telemetry-md focus:outline-none w-full" id="input-lat" type="text" value="-5.123400"/>
+</div>
+<div class="bg-surface-container-high/80 rounded-DEFAULT p-space-xs flex flex-col">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">LONGITUDE</span>
+<input class="bg-transparent text-on-surface font-label-telemetry-md text-label-telemetry-md focus:outline-none w-full" id="input-lng" type="text" value="119.123400"/>
+</div>
+</div>
+</div>
+<!-- Interactive Radius Slider -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase" for="geofence-radius-slider">Radius Validasi</label>
+<span class="font-label-telemetry-md text-label-telemetry-md text-primary font-bold" id="slider-val-badge">100 Meter</span>
+</div>
+<input class="w-full accent-primary h-1.5 bg-surface-container-highest rounded-lg cursor-pointer" id="geofence-radius-slider" max="500" min="50" step="10" type="range" value="100"/>
+<div class="flex justify-between font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">
+<span>50m (Ruang Lab)</span>
+<span>500m (Kampus)</span>
+</div>
+</div>
+<!-- Multi-SSID Wi-Fi Anchor Binding -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Wi-Fi Anchor (BSSID Lockdown)</label>
+<div class="flex items-center justify-between p-space-xs px-space-sm bg-surface-container-high/80 rounded-DEFAULT">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">wifi_lock</span>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Corp_Innovation_5G</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">BSSID: 4A:2C:9F:88:12:0E</span>
+</div>
+</div>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary">TERIKAT</span>
+</div>
+</div>
+<!-- Zone Operational Status Toggle -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-high/50 rounded-DEFAULT">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Status Operasional</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary">Aktif • Menerima Presensi</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-tertiary-container after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+<!-- Bottom Actions -->
+<div class="flex flex-col gap-space-xs mt-space-md pt-space-xs">
+<button class="w-full py-space-sm px-space-md rounded-DEFAULT bg-primary text-on-primary font-body-sm text-body-sm font-semibold shadow-lg shadow-primary/30 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-space-xs" id="btn-save-geofence" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Simpan Parameter Geofence</span>
+</button>
+<button class="w-full py-space-xs text-on-surface-variant hover:text-on-surface font-label-telemetry-sm text-label-telemetry-sm transition-colors" type="button">
+              Reset ke Koordinat Standar
+            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Core Module 2: Attendance Rules Configuration (Integrated Glass Panel) -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-[24px]">tune</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">Kebijakan &amp; Aturan Presensi PKL</h2>
+</div>
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-surface-container-high/70 backdrop-blur-md">
+<span class="material-symbols-outlined text-secondary text-[16px]">lock_clock</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-secondary">🔒 Server Time Auto-Sync (WITA UTC+8)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md p-space-lg rounded-lg bg-surface-container-low/70 backdrop-blur-3xl shadow-xl shadow-black/40">
+<!-- Left: Time Policy Grid (7 Cols) -->
+<div class="lg:col-span-7 flex flex-col justify-between gap-space-lg">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold mb-space-xs">Konfigurasi Jadwal &amp; Jam Kerja Harian</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Parameter berikut mengunci jadwal otomatis presensi masuk, grace period keterlambatan, dan checkout logbook harian peserta.
+            </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<!-- Jam Masuk -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-high/60 backdrop-blur-md flex flex-col gap-space-xs shadow-sm">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Jam Masuk (Check-in Start)</span>
+<div class="flex items-baseline gap-space-xs">
+<input class="bg-transparent text-primary font-headline-md text-headline-md font-bold focus:outline-none w-24" type="text" value="07:30"/>
+<span class="font-label-telemetry-md text-label-telemetry-md text-on-surface-variant">WITA</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Gerbang log dibuka: 07:00 WITA</span>
+</div>
+<!-- Jam Pulang -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-high/60 backdrop-blur-md flex flex-col gap-space-xs shadow-sm">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Jam Pulang (Check-out Time)</span>
+<div class="flex items-baseline gap-space-xs">
+<input class="bg-transparent text-on-surface font-headline-md text-headline-md font-bold focus:outline-none w-24" type="text" value="16:00"/>
+<span class="font-label-telemetry-md text-label-telemetry-md text-on-surface-variant">WITA</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Checkout awal butuh dispensasi tiket</span>
+</div>
+<!-- Toleransi Keterlambatan -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-high/60 backdrop-blur-md flex flex-col gap-space-xs shadow-sm">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Toleransi Keterlambatan (Grace)</span>
+<div class="flex items-baseline gap-space-xs">
+<input class="bg-transparent text-secondary font-headline-md text-headline-md font-bold focus:outline-none w-16" type="text" value="15"/>
+<span class="font-label-telemetry-md text-label-telemetry-md text-on-surface-variant">Menit</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Batas s/d 07:45 WITA tanpa penalti</span>
+</div>
+<!-- Minimal Jam Kerja -->
+<div class="p-space-md rounded-DEFAULT bg-surface-container-high/60 backdrop-blur-md flex flex-col gap-space-xs shadow-sm">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase">Minimal Durasi Harian</span>
+<div class="flex items-baseline gap-space-xs">
+<input class="bg-transparent text-tertiary font-headline-md text-headline-md font-bold focus:outline-none w-16" type="text" value="8.5"/>
+<span class="font-label-telemetry-md text-label-telemetry-md text-on-surface-variant">Jam / Hari</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Termasuk alokasi istirahat 60m</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="px-space-lg py-space-sm rounded-DEFAULT bg-gradient-to-r from-primary to-primary-container text-on-primary font-body-sm text-body-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all" type="button">
+              Perbarui Kebijakan Presensi
+            </button>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">Berlaku untuk 128 peserta aktif</span>
+</div>
+</div>
+<!-- Right: Security & Anti-Fraud Toggles (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col justify-between gap-space-md p-space-md rounded-DEFAULT bg-surface-container/60 backdrop-blur-xl shadow-inner shadow-white/5">
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-secondary uppercase tracking-wider">Keamanan &amp; Integritas Telemetri</span>
+<h4 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Validasi Perangkat &amp; Anti-Fraud</h4>
+</div>
+<div class="flex flex-col gap-space-md divide-y divide-surface-container-highest/60">
+<!-- Security Toggle 1 -->
+<div class="flex items-center justify-between pt-space-xs">
+<div class="flex flex-col pr-space-md">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Verifikasi Biometrik WebAuthn</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Face ID / Touch ID saat tapping presensi di perimeter</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-tertiary-container after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+<!-- Security Toggle 2 -->
+<div class="flex items-center justify-between pt-space-md">
+<div class="flex flex-col pr-space-md">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Blokir Fake GPS / Mock Location</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Otomatis gagalkan presensi jika aplikasi spoofing aktif</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-tertiary-container after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+<!-- Security Toggle 3 -->
+<div class="flex items-center justify-between pt-space-md">
+<div class="flex flex-col pr-space-md">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Dispensasi Surat Sakit / Izin Daring</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Siswa dapat mengunggah bukti PDF langsung via portal</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-tertiary-container after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+<div class="p-space-xs rounded bg-surface-container-high/40 flex items-center gap-space-xs text-on-surface-variant font-label-telemetry-sm text-label-telemetry-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">shield_lock</span>
+<span>Audit trail logbook dienkripsi SHA-256 berkala</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Core Module 3: User & Role Management Deck -->
+<section class="flex flex-col gap-space-md">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">User &amp; Role Management Deck</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Monitoring presensi, penugasan mentor pembimbing, dan hak akses kontrol.</p>
+</div>
+<!-- Role Segmented Tabs -->
+<div class="flex items-center p-1 rounded-full bg-surface-container-low/80 backdrop-blur-xl shadow-inner shadow-white/5 self-start md:self-auto">
+<button class="px-space-md py-1.5 rounded-full bg-primary text-on-primary font-body-sm text-body-sm font-semibold shadow-md" type="button">
+            Peserta Magang (128)
+          </button>
+<button class="px-space-md py-1.5 rounded-full text-on-surface-variant hover:text-on-surface font-body-sm text-body-sm transition-colors" type="button">
+            Staf Pembimbing (14)
+          </button>
+<button class="px-space-md py-1.5 rounded-full text-on-surface-variant hover:text-on-surface font-body-sm text-body-sm transition-colors" type="button">
+            Administrator (4)
+          </button>
+</div>
+</div>
+<!-- Action & Filter Bar -->
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-md bg-surface-container-low/70 backdrop-blur-2xl p-space-md rounded-lg shadow-lg shadow-black/30">
+<!-- Search Field -->
+<div class="relative flex-1 max-w-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-high/80 text-on-surface pl-10 pr-space-md py-space-xs rounded-DEFAULT font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant" placeholder="Cari berdasarkan nama, NIM, atau divisi..." type="text"/>
+</div>
+<!-- Filters & Actions -->
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Filter Divisi -->
+<div class="relative">
+<select class="appearance-none bg-surface-container-high/80 text-on-surface font-body-sm text-body-sm pl-space-md pr-8 py-space-xs rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary">
+<option>Semua Divisi</option>
+<option>AI &amp; Cloud</option>
+<option>Web Dev</option>
+<option>UI/UX Design</option>
+<option>Data Science</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[16px]">expand_more</span>
+</div>
+<!-- Filter Status -->
+<div class="relative">
+<select class="appearance-none bg-surface-container-high/80 text-on-surface font-body-sm text-body-sm pl-space-md pr-8 py-space-xs rounded-DEFAULT focus:outline-none focus:ring-1 focus:ring-primary">
+<option>Status Geofence: Semua</option>
+<option>In-Zone (Valid)</option>
+<option>Out-of-Zone</option>
+<option>Izin / Cuti</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[16px]">expand_more</span>
+</div>
+<!-- Button Export -->
+<button class="flex items-center gap-space-xs px-space-md py-space-xs rounded-DEFAULT bg-surface-container-high text-on-surface font-body-sm text-body-sm font-medium hover:bg-surface-bright transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Ekspor CSV</span>
+</button>
+<!-- Button Add User -->
+<button class="flex items-center gap-space-xs px-space-md py-space-xs rounded-DEFAULT bg-gradient-to-r from-primary to-secondary text-on-primary font-body-sm text-body-sm font-semibold shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>+ Tambah Pengguna</span>
+</button>
+</div>
+</div>
+<!-- Rich Frosted Glass User Table -->
+<div class="w-full overflow-x-auto rounded-lg bg-surface-container-low/70 backdrop-blur-3xl shadow-2xl shadow-black/40">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/60 font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant uppercase tracking-wider">
+<th class="py-space-md px-space-lg">Pengguna &amp; Divisi</th>
+<th class="py-space-md px-space-md">Role &amp; Batch</th>
+<th class="py-space-md px-space-md">Jarak &amp; Koordinat Terakhir</th>
+<th class="py-space-md px-space-md">Status Presensi Hari Ini</th>
+<th class="py-space-md px-space-lg text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest/40 font-body-sm text-body-sm">
+<!-- Row 1: Farah Nabila -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary font-headline-sm text-headline-sm">
+                    FN
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Farah Nabila</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">NIM: 210211054 • Divisi AI &amp; Cloud</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-sm py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-telemetry-sm text-label-telemetry-sm">
+                  Intern Batch 5
+                </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-telemetry-md text-label-telemetry-md text-tertiary font-semibold">42m</span>
+<span class="text-on-surface-variant font-label-telemetry-sm text-label-telemetry-sm">(Kantor Utama)</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-tertiary-container/20 text-tertiary font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Hadir 07:28 WITA (Tepat Waktu)</span>
+</div>
+</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button aria-label="Edit Profile" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Reset Token" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button aria-label="Delete Action" class="w-8 h-8 rounded-full flex items-center justify-center text-error hover:bg-error/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Rizky Ramadhan -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container/40 flex items-center justify-center font-bold text-secondary font-headline-sm text-headline-sm">
+                    RR
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Rizky Ramadhan</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">NIM: 210211089 • Divisi Web Dev</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-sm py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-telemetry-sm text-label-telemetry-sm">
+                  Intern Batch 5
+                </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-telemetry-md text-label-telemetry-md text-tertiary font-semibold">76m</span>
+<span class="text-on-surface-variant font-label-telemetry-sm text-label-telemetry-sm">(Kantor Utama)</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-tertiary-container/20 text-tertiary font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Hadir 07:34 WITA (Tepat Waktu)</span>
+</div>
+</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button aria-label="Edit Profile" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Reset Token" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button aria-label="Delete Action" class="w-8 h-8 rounded-full flex items-center justify-center text-error hover:bg-error/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Aulia Putri (Late) -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary font-headline-sm text-headline-sm">
+                    AP
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Aulia Putri</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">NIM: 210211012 • Divisi UI/UX Design</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-sm py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-telemetry-sm text-label-telemetry-sm">
+                  Intern Batch 5
+                </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-telemetry-md text-label-telemetry-md text-tertiary font-semibold">51m</span>
+<span class="text-on-surface-variant font-label-telemetry-sm text-label-telemetry-sm">(Kantor Utama)</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-error-container/30 text-error font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+<span>Terlambat 08:18 WITA (+33m)</span>
+</div>
+</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button aria-label="Edit Profile" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Reset Token" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button aria-label="Delete Action" class="w-8 h-8 rounded-full flex items-center justify-center text-error hover:bg-error/20 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Dimas Wahyu (Demonstrating Active Liquid Confirmation Popover) -->
+<tr class="relative bg-surface-container-high/40">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-error/20 flex items-center justify-center font-bold text-error font-headline-sm text-headline-sm">
+                    DW
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Dimas Wahyu</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">NIM: 210211103 • Divisi Data Science</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-sm py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-telemetry-sm text-label-telemetry-sm">
+                  Intern Batch 5
+                </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-label-telemetry-md text-label-telemetry-md text-error font-semibold">145m</span>
+<span class="text-error font-label-telemetry-sm text-label-telemetry-sm">(Di Luar Radius)</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-label-telemetry-sm text-label-telemetry-sm">
+<span class="material-symbols-outlined text-[14px]">hourglass_empty</span>
+<span>Menunggu Masuk Zona</span>
+</div>
+</td>
+<td class="py-space-md px-space-lg text-right relative">
+<!-- Triggered Liquid Glass Confirmation Popover -->
+<div class="absolute right-space-lg bottom-12 w-80 p-space-md rounded-lg bg-surface-container-high/95 backdrop-blur-3xl shadow-2xl shadow-black/80 z-30 text-left flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-error font-headline-sm text-headline-sm font-semibold">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+<span>Hapus Akses Peserta?</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                    Data riwayat logbook dan audit presensi Dimas Wahyu akan tetap diarsipkan secara permanen di database audit blockchain.
+                  </p>
+<div class="flex items-center justify-end gap-space-xs mt-space-xs">
+<button class="px-space-md py-1 rounded-full text-on-surface-variant hover:text-on-surface font-body-sm text-body-sm transition-colors" type="button">
+                      Batal
+                    </button>
+<button class="px-space-md py-1 rounded-full bg-error text-on-error font-body-sm text-body-sm font-semibold shadow-md shadow-error/30 hover:brightness-110 transition-all" type="button">
+                      Konfirmasi Hapus
+                    </button>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-xs">
+<button aria-label="Edit Profile" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="Reset Token" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">key</span>
+</button>
+<button aria-label="Delete Action" class="w-8 h-8 rounded-full flex items-center justify-center text-error bg-error/20" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Ir. Hendra Gunawan, M.T. (Staff Supervisor) -->
+<tr class="hover:bg-surface-container-high/40 transition-colors group">
+<td class="py-space-md px-space-lg">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/30 flex items-center justify-center font-bold text-tertiary font-headline-sm text-headline-sm">
+                    HG
+                  </div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Ir. Hendra Gunawan, M.T.</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">NIP: 19840211 • Pembimbing AI &amp; Cloud</span>
+</div>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<span class="inline-flex items-center px-space-sm py-0.5 rounded-full bg-primary/20 text-primary font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+                  Staff Supervisor
+                </span>
+</td>
+<td class="py-space-md px-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-telemetry-md text-label-telemetry-md text-tertiary font-semibold">12m</span>
+<span class="text-on-surface-variant font-label-telemetry-sm text-label-telemetry-sm">(Ruang Dosen/Lab)</span>
+</div>
+</td>
+<td class="py-space-md px-space-md">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-full bg-surface-container-highest text-tertiary font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+<span>Aktif Mengawasi (Supervisor On-Duty)</span>
+</div>
+</td>
+<td class="py-space-md px-space-lg text-right">
+<div class="flex items-center justify-end gap-space-xs">
+<button aria-label="Edit Profile" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button aria-label="View Logs" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Table Pagination Footer -->
+<div class="flex flex-col sm:flex-row items-center justify-between p-space-md bg-surface-container-high/40 font-body-sm text-body-sm text-on-surface-variant gap-space-sm">
+<span>Menampilkan 5 dari 128 data pengguna</span>
+<div class="flex items-center gap-space-xs">
+<button class="px-space-md py-1 rounded bg-surface-container-high text-on-surface hover:bg-surface-bright transition-colors" disabled="" type="button">Sebelumnya</button>
+<span class="px-space-sm font-label-telemetry-sm text-label-telemetry-sm text-primary font-bold">1 / 26</span>
+<button class="px-space-md py-1 rounded bg-surface-container-high text-on-surface hover:bg-surface-bright transition-colors" type="button">Berikutnya</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<script>
+  // Interactive Slider Linkage for Live Geofence Visualizer
+  const radiusSlider = document.getElementById('geofence-radius-slider');
+  const sliderValBadge = document.getElementById('slider-val-badge');
+  const labelRadiusDisplay = document.getElementById('label-radius-display');
+  const ringInner = document.getElementById('geofence-radius-ring-inner');
+  const ringOuter = document.getElementById('geofence-radius-ring-outer');
+  const btnPinGps = document.getElementById('btn-pin-gps');
+  const inputLat = document.getElementById('input-lat');
+  const inputLng = document.getElementById('input-lng');
+  const btnSaveGeofence = document.getElementById('btn-save-geofence');
+
+  if (radiusSlider && sliderValBadge && labelRadiusDisplay) {
+    radiusSlider.addEventListener('input', (e) => {
+      const val = e.target.value;
+      sliderValBadge.textContent = `${val} Meter`;
+      labelRadiusDisplay.textContent = val;
+
+      // Rescale visual radar circles proportionally
+      const scaleMultiplier = (val / 100);
+      const innerSize = Math.max(80, Math.min(420, 200 * scaleMultiplier));
+      const outerSize = Math.max(120, Math.min(520, 280 * scaleMultiplier));
+
+      if (ringInner) {
+        ringInner.style.width = `${innerSize}px`;
+        ringInner.style.height = `${innerSize}px`;
+      }
+      if (ringOuter) {
+        ringOuter.style.width = `${outerSize}px`;
+        ringOuter.style.height = `${outerSize}px`;
+      }
+    });
+  }
+
+  // Pin Current GPS Micro-interaction
+  if (btnPinGps && inputLat && inputLng) {
+    btnPinGps.addEventListener('click', () => {
+      btnPinGps.classList.add('animate-pulse');
+      setTimeout(() => {
+        inputLat.value = '-5.132890';
+        inputLng.value = '119.418420';
+        btnPinGps.classList.remove('animate-pulse');
+      }, 400);
+    });
+  }
+
+  // Save Parameters Notification Simulation
+  if (btnSaveGeofence) {
+    btnSaveGeofence.addEventListener('click', () => {
+      const originalText = btnSaveGeofence.innerHTML;
+      btnSaveGeofence.innerHTML = `<span class="material-symbols-outlined text-[18px]">check</span><span>Tersimpan di Node RTK!</span>`;
+      btnSaveGeofence.classList.add('bg-tertiary', 'text-on-tertiary');
+      btnSaveGeofence.classList.remove('bg-primary', 'text-on-primary');
+
+      setTimeout(() => {
+        btnSaveGeofence.innerHTML = originalText;
+        btnSaveGeofence.classList.remove('bg-tertiary', 'text-on-tertiary');
+        btnSaveGeofence.classList.add('bg-primary', 'text-on-primary');
+      }, 2000);
+    });
+  }
+</script></main><footer class="relative z-10 w-full bg-surface-container-lowest/80 backdrop-blur-2xl mt-space-xl shadow-[0_-4px_30px_rgba(0,0,0,0.4)]"><div class="w-full px-margin-desktop py-space-lg mx-auto flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">AETHER<span class="text-primary">.PKL</span></span><span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">© 2025 Liquid Telemetry Core. All rights reserved.</span></div><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span><span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">ENCRYPTED BIOMETRIC TELEMETRY ACTIVE</span></div><div class="flex items-center gap-space-xs text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"><span class="material-symbols-outlined text-[16px]">shield</span><span class="font-body-sm text-body-sm">ISO/IEC 27001</span></div></div></div></footer></body></html>

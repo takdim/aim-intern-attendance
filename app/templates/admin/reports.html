@@ -1,78 +1,146 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 {% block content %}
-<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
-  <div>
-    <h3 class="m-0">Laporan Kehadiran</h3>
-    <p class="page-subtitle">Rekap administrasi dengan filter periode, status, peserta, divisi, dan instansi.</p>
-  </div>
-  <div class="d-flex gap-2 flex-wrap">
-    <a class="btn btn-outline-success" href="{{ url_for('admin.export_reports_csv', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">Export CSV</a>
-    <a class="btn btn-outline-primary" href="{{ url_for('admin.export_reports_excel', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">Export Excel</a>
-    <a class="btn btn-primary" href="{{ url_for('admin.export_reports_pdf', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">Export PDF</a>
-  </div>
-</div>
+<div class="flex flex-col w-full gap-6 select-none">
 
-<div class="card card-soft mb-3">
-  <div class="card-body">
-    <form method="get" class="row g-3 align-items-end">
-      <div class="col-md-2">
-        <label class="form-label">Periode</label>
-        <select name="period" class="form-select">
+  <!-- Header Banner -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">ANALYTICS & EXPORT ENGINE</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Laporan Kehadiran Magang</h2>
+    </div>
+
+    <!-- Export Action Buttons -->
+    <div class="flex flex-wrap items-center gap-2">
+      <a class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-high border border-white/10 text-on-surface text-xs font-semibold hover:bg-surface-bright transition-colors" href="{{ url_for('admin.export_reports_csv', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">
+        <span class="material-symbols-outlined text-[16px] text-tertiary">csv</span>
+        <span>Ekspor CSV</span>
+      </a>
+      <a class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-high border border-white/10 text-on-surface text-xs font-semibold hover:bg-surface-bright transition-colors" href="{{ url_for('admin.export_reports_excel', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">
+        <span class="material-symbols-outlined text-[16px] text-primary">table_view</span>
+        <span>Ekspor Excel</span>
+      </a>
+      <a class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary text-on-primary font-headline-sm text-xs font-bold shadow-md shadow-primary/25 hover:brightness-110 active:scale-95 transition-all" href="{{ url_for('admin.export_reports_pdf', period=filters.period, anchor=filters.anchor_date.isoformat(), status=filters.status, institution=filters.institution, department=filters.department, user_id=filters.user_id) }}">
+        <span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+        <span>Ekspor PDF</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Card -->
+  <section class="glass-panel p-5 rounded-3xl shadow-xl">
+    <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end">
+      <!-- Periode -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Periode Rekap</label>
+        <select name="period" class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
           <option value="day" {% if filters.period == 'day' %}selected{% endif %}>Per Hari</option>
           <option value="week" {% if filters.period == 'week' %}selected{% endif %}>Per Minggu</option>
           <option value="month" {% if filters.period == 'month' %}selected{% endif %}>Per Bulan</option>
         </select>
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Tanggal Acuan</label>
-        <input type="date" name="anchor" class="form-control" value="{{ filters.anchor_date.isoformat() }}">
+
+      <!-- Tanggal Acuan -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Tanggal Acuan</label>
+        <input type="date" name="anchor" class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" value="{{ filters.anchor_date.isoformat() }}">
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Status</label>
-        <input class="form-control" name="status" value="{{ filters.status }}" placeholder="HADIR / TERLAMBAT">
+
+      <!-- Status -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Status</label>
+        <input class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="status" value="{{ filters.status }}" placeholder="HADIR / TERLAMBAT">
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Instansi</label>
-        <input class="form-control" name="institution" value="{{ filters.institution }}" placeholder="Nama instansi">
+
+      <!-- Instansi -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Instansi</label>
+        <input class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="institution" value="{{ filters.institution }}" placeholder="Nama instansi">
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Divisi/Prodi</label>
-        <input class="form-control" name="department" value="{{ filters.department }}" placeholder="Divisi/Prodi">
+
+      <!-- Divisi / Prodi -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Divisi / Prodi</label>
+        <input class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="department" value="{{ filters.department }}" placeholder="Divisi/Prodi">
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Peserta</label>
-        <select class="form-select" name="user_id">
-          <option value="">Semua</option>
-          {% for user in users %}
-          <option value="{{ user.id }}" {% if filters.user_id == (user.id|string) %}selected{% endif %}>{{ user.name }}</option>
+
+      <!-- Peserta -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Peserta</label>
+        <select class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="user_id">
+          <option value="">Semua Peserta</option>
+          {% for u in users %}
+            <option value="{{ u.id }}" {% if filters.user_id == (u.id|string) %}selected{% endif %}>{{ u.name }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="col-12 d-flex justify-content-between align-items-center">
-        <button class="btn btn-primary">Terapkan Filter</button>
-        <span class="badge-soft">{{ filters.start_date }} s/d {{ filters.end_date }}</span>
+
+      <div class="sm:col-span-2 lg:col-span-6 flex items-center justify-between pt-2">
+        <span class="font-label-telemetry-sm text-[11px] text-primary">Rentang Terpilih: {{ filters.start_date.strftime('%d/%m/%Y') }} s/d {{ filters.end_date.strftime('%d/%m/%Y') }}</span>
+        <button type="submit" class="py-2.5 px-6 rounded-xl bg-primary text-on-primary font-headline-sm text-xs font-bold shadow-md shadow-primary/20 hover:brightness-110 active:scale-95 transition-all">
+          Terapkan Filter
+        </button>
       </div>
     </form>
-  </div>
-</div>
+  </section>
 
-<div class="table-responsive card card-soft p-2">
-<table class="table table-striped m-0">
-<thead><tr><th>Tanggal</th><th>Nama</th><th>Status</th><th>Masuk</th><th>Pulang</th></tr></thead>
-<tbody>
-{% for row in attendances %}
-<tr>
-  <td>{{ row.date }}</td>
-  <td>{{ row.user.name }}</td>
-  <td>{{ row.status }}</td>
-  <td>{{ row.check_in.strftime('%H:%M') if row.check_in else '-' }}</td>
-  <td>{{ row.check_out.strftime('%H:%M') if row.check_out else '-' }}</td>
-</tr>
-{% endfor %}
-{% if not attendances %}
-<tr><td colspan="5" class="text-center py-4">Belum ada data pada filter ini.</td></tr>
-{% endif %}
-</tbody>
-</table>
+  <!-- Reports Table -->
+  <section class="w-full overflow-x-auto rounded-3xl glass-panel shadow-2xl pb-4">
+    <table class="w-full text-left border-collapse text-xs">
+      <thead>
+        <tr class="bg-surface-container-high/60 font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase tracking-wider border-b border-white/10">
+          <th class="py-3.5 px-5">Tanggal</th>
+          <th class="py-3.5 px-4">Nama Peserta</th>
+          <th class="py-3.5 px-4">Instansi</th>
+          <th class="py-3.5 px-4">Divisi</th>
+          <th class="py-3.5 px-4">Jam Masuk</th>
+          <th class="py-3.5 px-4">Jam Pulang</th>
+          <th class="py-3.5 px-4">Status</th>
+          <th class="py-3.5 px-5">Zona</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/5 font-body-sm">
+        {% if attendances %}
+          {% for row in attendances %}
+            <tr class="hover:bg-surface-container-high/40 transition-colors">
+              <td class="py-3.5 px-5 font-headline-sm text-xs font-bold text-on-surface">
+                {{ row.date.strftime('%d/%m/%Y') if row.date else '-' }}
+              </td>
+              <td class="py-3.5 px-4 font-semibold text-on-surface">
+                {{ row.user.name }}
+              </td>
+              <td class="py-3.5 px-4 text-on-surface-variant">
+                {{ row.user.institution or '-' }}
+              </td>
+              <td class="py-3.5 px-4 text-on-surface-variant">
+                {{ row.user.department or '-' }}
+              </td>
+              <td class="py-3.5 px-4 font-label-telemetry-sm text-on-surface">
+                {{ row.check_in.strftime('%H:%M') if row.check_in else '--:--' }}
+              </td>
+              <td class="py-3.5 px-4 font-label-telemetry-sm text-on-surface">
+                {{ row.check_out.strftime('%H:%M') if row.check_out else '--:--' }}
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold font-label-telemetry-sm border {% if row.status in ['HADIR', 'TEPAT_WAKTU'] %}bg-tertiary-container/20 border-tertiary/30 text-tertiary{% elif row.status == 'TERLAMBAT' %}bg-secondary-container/20 border-secondary/30 text-secondary{% elif row.status == 'ALPHA' %}bg-error-container/20 border-error/30 text-error{% else %}bg-primary-container/20 border-primary/30 text-primary{% endif %}">
+                  <span class="w-1.5 h-1.5 rounded-full {% if row.status in ['HADIR', 'TEPAT_WAKTU'] %}bg-tertiary{% else %}bg-primary{% endif %}"></span>
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="py-3.5 px-5 font-label-telemetry-sm text-on-surface-variant">
+                {{ row.zone.name if row.zone else '-' }}
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="8" class="py-8 text-center text-on-surface-variant text-xs">
+              Tidak ada data laporan pada filter ini.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </section>
+
 </div>
 {% endblock %}

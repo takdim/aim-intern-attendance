@@ -1,22 +1,70 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 {% block content %}
-<div class="page-header">
-  <h3 class="mb-1">Edit Zona</h3>
-  <p class="page-subtitle">Perbarui koordinat, radius, dan status aktif zona.</p>
-</div>
-<div class="card card-soft"><div class="card-body">
-<form method="post" class="row g-3">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <div class="col-md-6"><label class="form-label">Nama Zona</label><input class="form-control" name="name" value="{{ zone.name }}" required></div>
-  <div class="col-md-6"><label class="form-label">Deskripsi</label><input class="form-control" name="description" value="{{ zone.description or '' }}"></div>
-  <div class="col-md-4"><label class="form-label">Latitude</label><input class="form-control" name="latitude" value="{{ zone.latitude }}" required></div>
-  <div class="col-md-4"><label class="form-label">Longitude</label><input class="form-control" name="longitude" value="{{ zone.longitude }}" required></div>
-  <div class="col-md-4"><label class="form-label">Radius (m)</label><input class="form-control" name="radius" value="{{ zone.radius }}" required></div>
-  <div class="col-12 form-check"><input class="form-check-input" type="checkbox" name="is_active" {% if zone.is_active %}checked{% endif %}><label class="form-check-label">Aktif</label></div>
-  <div class="col-12 d-flex gap-2">
-    <button class="btn btn-success">Simpan</button>
-    <a class="btn btn-outline-secondary" href="{{ url_for('admin.zones') }}">Kembali</a>
+<div class="flex flex-col w-full max-w-2xl mx-auto gap-6 select-none">
+
+  <!-- Header Banner -->
+  <div class="flex items-center justify-between px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">GEOFENCE PARAMETER EDITOR</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Edit Zona Perimeter</h2>
+    </div>
+    <span class="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-telemetry-sm text-[10px] font-semibold">
+      ZONE ID #{{ zone.id }}
+    </span>
   </div>
-</form>
-</div></div>
+
+  <!-- Form Glass Card -->
+  <section class="p-6 rounded-3xl glass-panel shadow-2xl">
+    <form method="post" class="flex flex-col gap-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="flex flex-col gap-1">
+        <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Nama Zona</span>
+        <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="name" value="{{ zone.name }}" required>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Deskripsi Operasional</span>
+        <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="description" value="{{ zone.description or '' }}">
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Latitude (WGS84)</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs font-label-telemetry-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="latitude" value="{{ zone.latitude }}" required>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Longitude (WGS84)</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs font-label-telemetry-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="longitude" value="{{ zone.longitude }}" required>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Radius Valid (Meter)</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" type="number" min="10" max="1000" name="radius" value="{{ zone.radius|int }}" required>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-high/40 border border-white/5 cursor-pointer">
+          <input type="checkbox" name="is_active" {% if zone.is_active %}checked{% endif %} class="w-4 h-4 accent-tertiary">
+          <div>
+            <span class="text-xs font-semibold text-on-surface block">Zona Aktif & Menerima Presensi</span>
+            <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Siswa di dalam radius diizinkan melakukan tap presensi.</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="flex items-center gap-3 pt-3">
+        <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline-sm text-xs sm:text-sm font-bold shadow-lg shadow-primary/25 hover:brightness-110 active:scale-95 transition-all">
+          Simpan Perubahan
+        </button>
+        <a href="{{ url_for('admin.zones') }}" class="px-5 py-3 rounded-xl bg-surface-container border border-white/10 text-on-surface text-xs font-semibold hover:bg-surface-container-high transition-colors text-center">
+          Batal
+        </a>
+      </div>
+    </form>
+  </section>
+
+</div>
 {% endblock %}

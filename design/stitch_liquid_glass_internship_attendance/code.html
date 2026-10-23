@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-secondary-container": "#c4abff", "on-secondary-fixed-variant": "#5516be", "background": "#0e1321", "error": "#ffb4ab", "primary-fixed": "#acedff", "tertiary-fixed-dim": "#4edea3", "primary": "#4cd7f6", "on-background": "#dee2f6", "on-error-container": "#ffdad6", "outline": "#869397", "on-tertiary": "#003824", "on-surface": "#dee2f6", "tertiary": "#4edea3", "tertiary-fixed": "#6ffbbe", "primary-fixed-dim": "#4cd7f6", "on-tertiary-fixed-variant": "#005236", "on-surface-variant": "#bcc9cd", "error-container": "#93000a", "on-secondary": "#3c0091", "inverse-on-surface": "#2b303f", "surface-container": "#1a1f2e", "surface-variant": "#303444", "surface-container-highest": "#303444", "secondary-fixed": "#e9ddff", "on-primary-fixed-variant": "#004e5c", "surface-container-lowest": "#090e1c", "primary-container": "#06b6d4", "surface": "#0e1321", "surface-bright": "#343948", "on-tertiary-container": "#00452e", "on-primary-container": "#00424f", "surface-container-high": "#252a39", "surface-tint": "#4cd7f6", "on-primary-fixed": "#001f26", "on-tertiary-fixed": "#002113", "on-secondary-fixed": "#23005c", "on-error": "#690005", "inverse-primary": "#00687a", "secondary-fixed-dim": "#d0bcff", "on-primary": "#003640", "outline-variant": "#3d494c", "tertiary-container": "#1bbd85", "surface-dim": "#0e1321", "inverse-surface": "#dee2f6", "secondary-container": "#571bc1", "surface-container-low": "#161b2a", "secondary": "#d0bcff" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "space-md": "1rem", "gutter": "1rem", "gutter-desktop": "2rem", "margin-tablet": "2rem", "margin-desktop": "3rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter-tablet": "1.5rem", "space-xl": "2.5rem", "margin": "1.25rem", "space-xs": "0.25rem" }, fontFamily: { "body-sm": ["Inter"], "display-hero": ["Space Grotesk"], "headline-md": ["Space Grotesk"], "headline-lg-mobile": ["Space Grotesk"], "body-md": ["Inter"], "display-hero-mobile": ["Space Grotesk"], "headline-sm": ["Space Grotesk"], "headline-lg": ["Space Grotesk"], "label-telemetry-sm": ["JetBrains Mono"], "label-telemetry-lg": ["JetBrains Mono"], "body-lg": ["Inter"], "label-telemetry-md": ["JetBrains Mono"] }, fontSize: { "body-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.01em", fontWeight: "400" }], "display-hero": ["56px", { lineHeight: "64px", letterSpacing: "-0.04em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "600" }], "headline-lg-mobile": ["28px", { lineHeight: "34px", letterSpacing: "-0.02em", fontWeight: "600" }], "body-md": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "400" }], "display-hero-mobile": ["38px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "700" }], "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "500" }], "headline-lg": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "600" }], "label-telemetry-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "500" }], "label-telemetry-lg": ["16px", { lineHeight: "20px", letterSpacing: "0.04em", fontWeight: "600" }], "body-lg": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "400" }], "label-telemetry-md": ["12px", { lineHeight: "16px", letterSpacing: "0.06em", fontWeight: "500" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#030712;color:#dee2f6;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-on-primary"><div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden"><div class="absolute -top-32 -left-20 w-80 h-80 rounded-full bg-primary/20 blur-[90px]"></div><div class="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-secondary-container/30 blur-[100px]"></div><div class="absolute bottom-20 left-10 w-72 h-72 rounded-full bg-tertiary-container/20 blur-[85px]"></div></div><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface-container-lowest/40 backdrop-blur-3xl shadow-[0_4px_30px_rgba(0,0,0,0.5)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="Aether PKL Hologram Logo" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVcBthvAh78V-ibEFmM3Ys8B8l1hIYBxgZU5lBporwZK3kCcuSSF2j7C7wwcUKvoU4TdXuuBGkR3yR7kypzCprMUB3UrwlDmWWqBLmbvd-X6AK17rrl3e1GEd7cudPIgtU_kUnp3Iv_rdzkZ8j1-GEy5XsQBfPcZMP3sTxIaB4uiGHtxiu0ZY7RcRaoqliGYD0k6QzXRgUzgNH2Em6VRd2kIMZUdShLh_zJaOS0I5FPPuGJ0kOmdPGxg"/><div class="flex flex-col min-w-0"><span class="font-label-telemetry-sm text-label-telemetry-sm uppercase tracking-widest text-primary truncate">Aether PKL</span><h1 class="font-headline-sm text-headline-sm text-on-surface truncate font-semibold">Beranda</h1></div></div><div class="flex items-center gap-space-sm shrink-0"><div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.15)]"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary">WITA SYNC</span></div><button class="w-11 h-11 rounded-full p-0.5 flex items-center justify-center hover:opacity-90 active:scale-95 transition-transform"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQJJU4f4MoBBmwX5eIInJwSsbAfQhNyn8j_zLCdfuXkrDAQlILScmGgjg-OeA-g5ODfeQw9LAwGl-tBNzb31X8SyrBy5IHIjgSWMBzI5FAXhtL8Pm1DP2E_PVli5LWwaLKWZVXle-ttyWAfhnrQDMIKbtF6tMpajcrF1yytOOIMKLepNhbyD5S1-z4BMn8AxVV7RriwYaCQPVsES2w9k51yKQ0JRk9pmEKfdy7XN562Co05vZmlxGY8A"/></button></div></div></header><main class="flex flex-col relative w-full px-margin pt-16 pb-28 bg-surface min-h-screen"><div class="flex flex-col w-full gap-space-lg select-none">
+<!-- Dynamic Island Chrono & Geofence Beacon Header -->
+<section class="flex flex-col gap-space-sm">
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/70 backdrop-blur-3xl p-4 shadow-[0_12px_40px_rgba(0,0,0,0.65),inset_0_1px_1px_0_rgba(255,255,255,0.22)]">
+<!-- Specular Shimmer Top Edge -->
+<div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+<div class="flex flex-col gap-3">
+<!-- Live Chrono Island Pill -->
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.14)]">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
+</span>
+<span class="font-label-telemetry-lg text-label-telemetry-lg tracking-wider text-on-surface tabular-nums" id="live-wita-clock">08:14:32 WITA</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-container/40 text-on-secondary-container text-body-sm font-body-sm shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.12)]">
+<span class="material-symbols-outlined text-[15px] text-secondary">satellite_alt</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm uppercase">GNSS Lock 98.4%</span>
+</div>
+</div>
+<!-- Geofence Perimeter Badge -->
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-tertiary-container/15 text-on-tertiary-container backdrop-blur-2xl shadow-[inset_0_1px_1px_0_rgba(78,222,163,0.25)]">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-lg bg-tertiary/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[18px]">radar</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-body-sm text-tertiary font-semibold truncate">Kantor Utama</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary/80">(R: 100m)</span>
+</div>
+<p class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant truncate">
+                Jarak Anda: <span class="text-tertiary font-semibold">42m</span> • <span class="text-tertiary">DALAM ZONA</span>
+</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-tertiary text-on-tertiary font-label-telemetry-sm text-label-telemetry-sm font-bold tracking-tight uppercase">VALID</span>
+</div>
+</div>
+</div>
+<!-- Intern Greeting Profile Strip -->
+<div class="flex items-center justify-between px-3 py-2 rounded-xl bg-surface-container-high/40 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)]">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-9 h-9 rounded-full bg-primary-container/20 flex items-center justify-center text-primary font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)] shrink-0">
+          FN
+        </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1">
+<span class="font-headline-sm text-body-md text-on-surface font-semibold truncate">Halo, Farah Nabila</span>
+<span class="text-xs">👋</span>
+</div>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant truncate">NIM: 210211054 • Divisi AI Engineering</span>
+</div>
+</div>
+<div class="shrink-0 flex items-center">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-telemetry-sm text-label-telemetry-sm">Magang Batch 5</span>
+</div>
+</div>
+</section>
+<!-- Interactive Liquid Glass Biometric Punch Card -->
+<section class="relative rounded-2xl bg-surface-container-lowest/65 backdrop-blur-3xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.7),inset_0_1px_1px_0_rgba(255,255,255,0.22)] overflow-hidden">
+<!-- Ambient Internal Prismatic Mesh Glows -->
+<div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-primary-container/20 blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-16 -left-12 w-52 h-52 rounded-full bg-secondary-container/25 blur-3xl pointer-events-none"></div>
+<!-- Punch Mode Switcher Tabs -->
+<div class="relative z-10 flex p-1 rounded-full bg-surface-container-high/60 backdrop-blur-2xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.12)] max-w-xs mx-auto mb-6">
+<button class="flex-1 py-1.5 rounded-full text-center font-headline-sm text-body-sm font-semibold transition-all duration-300 bg-primary text-on-primary shadow-[0_4px_16px_rgba(76,215,246,0.35)]" id="btn-mode-masuk">
+        Absen Masuk
+      </button>
+<button class="flex-1 py-1.5 rounded-full text-center font-headline-sm text-body-sm font-medium transition-all duration-300 text-on-surface-variant hover:text-on-surface" id="btn-mode-pulang">
+        Absen Pulang
+      </button>
+</div>
+<!-- Biometric Radar Interactive Core -->
+<div class="relative z-10 flex flex-col items-center justify-center my-3">
+<!-- Concentric Aura Circles -->
+<div class="relative flex items-center justify-center w-56 h-56">
+<div class="absolute inset-0 rounded-full bg-primary/5 animate-ping opacity-35" style="animation-duration: 3.2s;"></div>
+<div class="absolute inset-4 rounded-full bg-tertiary/10 blur-md"></div>
+<div class="absolute inset-2 rounded-full bg-surface-container-high/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)]"></div>
+<!-- Main Touch / Scan Action Disc -->
+<button aria-label="Lakukan Absensi Biometrik" class="relative group w-44 h-44 rounded-full bg-gradient-to-br from-surface-container-high/90 to-surface-container-lowest/80 backdrop-blur-3xl shadow-[0_12px_45px_rgba(0,0,0,0.8),inset_0_2px_4px_0_rgba(255,255,255,0.35),0_0_28px_rgba(76,215,246,0.2)] flex flex-col items-center justify-center active:scale-95 transition-all duration-300 cursor-pointer overflow-hidden" id="biometric-trigger">
+<!-- Continuous Rotating Laser Sweep Line -->
+<div class="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+<div class="w-full h-full bg-gradient-to-r from-transparent via-primary/25 to-transparent animate-spin" style="animation-duration: 5s;"></div>
+</div>
+<!-- Holographic Biometric Ring SVG & Fingerprint Core -->
+<div class="relative z-10 flex flex-col items-center justify-center gap-1.5 pointer-events-none">
+<div class="relative w-16 h-16 flex items-center justify-center">
+<svg class="w-16 h-16 text-primary group-hover:text-tertiary transition-colors duration-300 drop-shadow-[0_0_12px_rgba(76,215,246,0.7)]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+<path d="M12 2a10 10 0 0 0-10 10c0 3.2 1.5 6 3.8 7.8"></path>
+<path d="M12 6a6 6 0 0 0-6 6c0 1.9.9 3.6 2.3 4.7"></path>
+<path d="M12 10a2 2 0 0 0-2 2c0 .8.4 1.5 1 1.9"></path>
+<path d="M14 12c0 2.2-1.8 4-4 4"></path>
+<path d="M18 12c0 4.4-3.6 8-8 8-1.5 0-3-.4-4.2-1.2"></path>
+<path d="M22 12c0 5.5-4.5 10-10 10-2.4 0-4.6-.9-6.3-2.3"></path>
+<line x1="2" x2="4" y1="12" y2="12"></line>
+<line x1="20" x2="22" y1="12" y2="12"></line>
+</svg>
+<!-- Center Laser Scanning Particle -->
+<div class="hidden absolute inset-x-1 h-0.5 bg-tertiary shadow-[0_0_10px_#4edea3] animate-pulse" id="scan-particle"></div>
+</div>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-wide drop-shadow-md" id="trigger-label">
+              TAP MASUK
+            </span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-primary group-hover:text-tertiary font-semibold uppercase tracking-widest">
+              GEOFENCE SECURE
+            </span>
+</div>
+<!-- Bottom Audio & Haptic Feedback Ripples -->
+<div class="absolute bottom-3 flex items-center gap-1">
+<span class="w-1 h-2 rounded-full bg-primary/70 animate-bounce" style="animation-delay: 0.1s"></span>
+<span class="w-1 h-3.5 rounded-full bg-primary animate-bounce" style="animation-delay: 0.2s"></span>
+<span class="w-1 h-2 rounded-full bg-primary/70 animate-bounce" style="animation-delay: 0.3s"></span>
+</div>
+</button>
+</div>
+<!-- Live Success/Feedback Alert (Hidden by default) -->
+<div class="hidden mt-3 px-4 py-2 rounded-xl bg-tertiary-container/30 text-on-tertiary-container backdrop-blur-xl shadow-[0_6px_20px_rgba(27,189,133,0.3)] flex items-center gap-2" id="feedback-toast">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+<span class="font-body-sm text-body-sm font-semibold text-tertiary">Biometrik Terverifikasi! Presensi Tersimpan.</span>
+</div>
+</div>
+<!-- Operating Window Glass Strip -->
+<div class="relative z-10 mt-4 pt-3 flex flex-col gap-2 bg-surface-container-high/30 rounded-xl p-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+          Shift Normal Magang
+        </span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface font-semibold">08:00 — 17:00 WITA</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">timelapse</span>
+          Toleransi Keterlambatan
+        </span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary font-medium">15 Menit (s/d 08:15)</span>
+</div>
+</div>
+</section>
+<!-- Quick Stats Liquid Metric Grid -->
+<section class="grid grid-cols-3 gap-2.5">
+<!-- Stat 1: Kehadiran -->
+<div class="flex flex-col p-3 rounded-2xl bg-surface-container-low/70 backdrop-blur-2xl shadow-[0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.15)] min-w-0">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Kehadiran</span>
+<span class="material-symbols-outlined text-tertiary text-[18px]">verified</span>
+</div>
+<span class="font-display-hero-mobile text-headline-lg-mobile font-bold text-on-surface tracking-tight">95%</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary font-medium mt-1 truncate">+2% bln lalu</span>
+</div>
+<!-- Stat 2: Terlambat -->
+<div class="flex flex-col p-3 rounded-2xl bg-surface-container-low/70 backdrop-blur-2xl shadow-[0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.15)] min-w-0">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Terlambat</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">warning</span>
+</div>
+<span class="font-display-hero-mobile text-headline-lg-mobile font-bold text-on-surface tracking-tight">1 <span class="font-headline-sm text-body-md font-normal text-on-surface-variant">Hari</span></span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-secondary-container mt-1 truncate">Toleransi aman</span>
+</div>
+<!-- Stat 3: Sisa Izin/Cuti -->
+<div class="flex flex-col p-3 rounded-2xl bg-surface-container-low/70 backdrop-blur-2xl shadow-[0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.15)] min-w-0">
+<div class="flex items-center justify-between mb-1.5">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Sisa Cuti</span>
+<span class="material-symbols-outlined text-primary text-[18px]">event_available</span>
+</div>
+<span class="font-display-hero-mobile text-headline-lg-mobile font-bold text-on-surface tracking-tight">5 <span class="font-headline-sm text-body-md font-normal text-on-surface-variant">Hari</span></span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-primary font-medium mt-1 truncate">S.d Nov 2024</span>
+</div>
+</section>
+<!-- Floating Action Pills: Izin & Dispensasi Modal Triggers -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center justify-between px-1">
+<h2 class="font-headline-sm text-body-md text-on-surface font-semibold">Pengajuan Cepat Dispensasi</h2>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-primary uppercase">E-Form PKL</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Sakit Button Pill -->
+<button class="group flex flex-col p-3 rounded-2xl bg-surface-container-high/50 hover:bg-surface-container-high/80 backdrop-blur-2xl text-left shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.18)] active:scale-98 transition-all" id="btn-modal-sakit">
+<div class="flex items-center gap-2 mb-1.5">
+<div class="w-7 h-7 rounded-lg bg-secondary-container/40 flex items-center justify-center text-secondary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[17px]">medical_services</span>
+</div>
+<span class="font-headline-sm text-body-md font-semibold text-on-surface truncate">Izin Sakit</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight line-clamp-2">
+          Upload surat keterangan dokter faskes
+        </p>
+</button>
+<!-- Pulang Cepat Pill -->
+<button class="group flex flex-col p-3 rounded-2xl bg-surface-container-high/50 hover:bg-surface-container-high/80 backdrop-blur-2xl text-left shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.18)] active:scale-98 transition-all" id="btn-modal-pulang-cepat">
+<div class="flex items-center gap-2 mb-1.5">
+<div class="w-7 h-7 rounded-lg bg-primary-container/25 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[17px]">door_open</span>
+</div>
+<span class="font-headline-sm text-body-md font-semibold text-on-surface truncate">Pulang Cepat</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight line-clamp-2">
+          Checkout terencana sebelum 16:00 WITA
+        </p>
+</button>
+</div>
+</section>
+<!-- Recent History Glass Stream (Riwayat 7 Hari Terakhir) -->
+<section class="flex flex-col gap-space-sm pb-4">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">history</span>
+<h2 class="font-headline-sm text-body-md text-on-surface font-semibold">Riwayat Presensi Terkini</h2>
+</div>
+<a class="font-label-telemetry-sm text-label-telemetry-sm text-primary hover:text-primary-fixed-dim transition-colors flex items-center gap-0.5" href="#">
+        Lihat Semua <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<!-- History Stream Glass Stack -->
+<div class="flex flex-col gap-2.5">
+<!-- Card 1: Hari Ini -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/60 backdrop-blur-2xl p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_0_rgba(255,255,255,0.14)]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-headline-sm text-body-md font-bold text-on-surface">Hari Ini</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">24 Okt 2024</span>
+</div>
+<div class="flex items-center gap-3 text-body-sm font-body-sm text-on-surface-variant">
+<span>Masuk: <strong class="text-on-surface font-label-telemetry-sm">07:54</strong></span>
+<span>•</span>
+<span>Pulang: <strong class="text-primary font-label-telemetry-sm">--:--</strong></span>
+</div>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-tertiary mt-1">Geo-lock: 38 meter radius</span>
+</div>
+<div class="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-container/30 text-tertiary font-label-telemetry-sm text-label-telemetry-sm font-semibold shadow-[0_0_15px_rgba(27,189,133,0.25)]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            TEPAT WAKTU
+          </div>
+</div>
+</div>
+<!-- Card 2: Kemarin -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/60 backdrop-blur-2xl p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_0_rgba(255,255,255,0.12)]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">Kemarin</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">23 Okt 2024</span>
+</div>
+<div class="flex items-center gap-3 text-body-sm font-body-sm text-on-surface-variant">
+<span>Masuk: <strong class="text-on-surface font-label-telemetry-sm">08:02</strong></span>
+<span>•</span>
+<span>Pulang: <strong class="text-on-surface font-label-telemetry-sm">17:15</strong></span>
+</div>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant mt-1">Geo-lock: 45 meter radius</span>
+</div>
+<div class="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-container/20 text-tertiary font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+            HADIR
+          </div>
+</div>
+</div>
+<!-- Card 3: 22 Okt (Terlambat) -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/60 backdrop-blur-2xl p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_0_rgba(255,255,255,0.12)]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">Selasa</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">22 Okt 2024</span>
+</div>
+<div class="flex items-center gap-3 text-body-sm font-body-sm text-on-surface-variant">
+<span>Masuk: <strong class="text-secondary font-label-telemetry-sm">08:18</strong></span>
+<span>•</span>
+<span>Pulang: <strong class="text-on-surface font-label-telemetry-sm">17:05</strong></span>
+</div>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-secondary mt-1">Telat 3 menit lewat toleransi</span>
+</div>
+<div class="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/30 text-secondary font-label-telemetry-sm text-label-telemetry-sm font-semibold shadow-[0_0_15px_rgba(196,171,255,0.2)]">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            TELAT 18M
+          </div>
+</div>
+</div>
+<!-- Card 4: 21 Okt (Sakit Disetujui) -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/60 backdrop-blur-2xl p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_0_rgba(255,255,255,0.12)]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">Senin</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">21 Okt 2024</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">
+              Izin Sakit: Surat RS Wahidin terverifikasi HRD
+            </p>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-primary mt-1">Dokumen: SKU-2110-MED.pdf</span>
+</div>
+<div class="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/40 text-on-secondary-container font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+            SAKIT ACC
+          </div>
+</div>
+</div>
+<!-- Card 5: 18 Okt (Pulang Cepat) -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/60 backdrop-blur-2xl p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_0_rgba(255,255,255,0.12)]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-headline-sm text-body-md font-semibold text-on-surface">Jumat</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">18 Okt 2024</span>
+</div>
+<div class="flex items-center gap-3 text-body-sm font-body-sm text-on-surface-variant">
+<span>Masuk: <strong class="text-on-surface font-label-telemetry-sm">07:50</strong></span>
+<span>•</span>
+<span>Pulang: <strong class="text-primary font-label-telemetry-sm">15:30</strong></span>
+</div>
+<span class="font-body-sm text-body-sm text-primary mt-1 truncate">Catatan: Sidang Progres Kampus</span>
+</div>
+<div class="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-container/20 text-primary font-label-telemetry-sm text-label-telemetry-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            DISPENSASI
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Slide-Up Micro Modal for Izin/Dispensasi -->
+<div class="fixed inset-0 z-50 bg-surface-container-lowest/80 backdrop-blur-md hidden flex-col justify-end p-4 transition-all duration-300" id="izin-modal-overlay">
+<div class="w-full max-w-lg mx-auto rounded-3xl bg-surface-container-high/90 backdrop-blur-3xl p-5 shadow-[0_25px_60px_rgba(0,0,0,0.85),inset_0_1px_1px_0_rgba(255,255,255,0.25)] flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">post_add</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold" id="modal-title">Pengajuan Izin Sakit</h3>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container/60 text-on-surface-variant flex items-center justify-center hover:text-on-surface" id="modal-close">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-3">
+<label class="flex flex-col gap-1">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">Tanggal Dispensasi</span>
+<input class="px-3 py-2 rounded-xl bg-surface-container-lowest/80 text-on-surface font-body-sm outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" type="date" value="2024-10-24"/>
+</label>
+<label class="flex flex-col gap-1">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">Keterangan Alasan</span>
+<textarea class="px-3 py-2 rounded-xl bg-surface-container-lowest/80 text-on-surface font-body-sm outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] resize-none" placeholder="Tuliskan keterangan detail dispensasi Anda..." rows="2"></textarea>
+</label>
+<div class="flex flex-col gap-1.5">
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">Unggah Lampiran Bukti (PDF / JPG)</span>
+<div class="flex items-center justify-center p-4 rounded-xl bg-surface-container-lowest/40 hover:bg-surface-container-lowest/70 cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-primary text-2xl">cloud_upload</span>
+<span class="font-body-sm text-body-sm text-on-surface">Pilih file surat keterangan</span>
+<span class="font-label-telemetry-sm text-label-telemetry-sm text-on-surface-variant">Maksimal ukuran 5MB</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-2">
+<button class="flex-1 py-2.5 rounded-full bg-surface-container text-on-surface font-body-sm font-semibold active:scale-95 transition-transform" id="modal-cancel-btn">
+          Batal
+        </button>
+<button class="flex-1 py-2.5 rounded-full bg-primary text-on-primary font-body-sm font-bold shadow-[0_4px_16px_rgba(76,215,246,0.35)] active:scale-95 transition-transform" id="modal-submit-btn">
+          Kirim Pengajuan
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Dynamic Realtime Digital Clock in WITA (UTC+8)
+  function updateWitaClock() {
+    const clockElement = document.getElementById('live-wita-clock');
+    if (!clockElement) return;
+    const now = new Date();
+    // UTC offset for WITA is +8
+    const utcHours = now.getUTCHours() + 8;
+    const witaHours = (utcHours % 24).toString().padStart(2, '0');
+    const minutes = now.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = now.getUTCSeconds().toString().padStart(2, '0');
+    clockElement.textContent = `${witaHours}:${minutes}:${seconds} WITA`;
+  }
+  setInterval(updateWitaClock, 1000);
+  updateWitaClock();
+
+  // Mode Switcher: Masuk vs Pulang
+  let currentMode = 'masuk';
+  const btnMasuk = document.getElementById('btn-mode-masuk');
+  const btnPulang = document.getElementById('btn-mode-pulang');
+  const triggerLabel = document.getElementById('trigger-label');
+  const biometricTrigger = document.getElementById('biometric-trigger');
+  const scanParticle = document.getElementById('scan-particle');
+  const feedbackToast = document.getElementById('feedback-toast');
+
+  if (btnMasuk && btnPulang) {
+    btnMasuk.addEventListener('click', () => {
+      currentMode = 'masuk';
+      btnMasuk.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-body-sm font-semibold transition-all duration-300 bg-primary text-on-primary shadow-[0_4px_16px_rgba(76,215,246,0.35)]';
+      btnPulang.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-body-sm font-medium transition-all duration-300 text-on-surface-variant hover:text-on-surface';
+      triggerLabel.textContent = 'TAP MASUK';
+    });
+
+    btnPulang.addEventListener('click', () => {
+      currentMode = 'pulang';
+      btnPulang.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-body-sm font-semibold transition-all duration-300 bg-secondary text-on-secondary shadow-[0_4px_16px_rgba(208,188,255,0.35)]';
+      btnMasuk.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-body-sm font-medium transition-all duration-300 text-on-surface-variant hover:text-on-surface';
+      triggerLabel.textContent = 'TAP PULANG';
+    });
+  }
+
+  // Biometric Scan Interaction
+  if (biometricTrigger) {
+    biometricTrigger.addEventListener('click', () => {
+      scanParticle.classList.remove('hidden');
+      triggerLabel.textContent = 'MEMINDAI...';
+      
+      setTimeout(() => {
+        scanParticle.classList.add('hidden');
+        triggerLabel.textContent = currentMode === 'masuk' ? 'TERCATAT!' : 'SELESAI!';
+        
+        feedbackToast.classList.remove('hidden');
+        feedbackToast.classList.add('flex');
+
+        setTimeout(() => {
+          feedbackToast.classList.add('hidden');
+          feedbackToast.classList.remove('flex');
+          triggerLabel.textContent = currentMode === 'masuk' ? 'TAP MASUK' : 'TAP PULANG';
+        }, 3200);
+      }, 1200);
+    });
+  }
+
+  // Modal Dialog Handlers
+  const modalOverlay = document.getElementById('izin-modal-overlay');
+  const modalTitle = document.getElementById('modal-title');
+  const btnModalSakit = document.getElementById('btn-modal-sakit');
+  const btnModalPulangCepat = document.getElementById('btn-modal-pulang-cepat');
+  const modalClose = document.getElementById('modal-close');
+  const modalCancel = document.getElementById('modal-cancel-btn');
+  const modalSubmit = document.getElementById('modal-submit-btn');
+
+  function openModal(title) {
+    if (modalTitle) modalTitle.textContent = title;
+    modalOverlay.classList.remove('hidden');
+    modalOverlay.classList.add('flex');
+  }
+
+  function closeModal() {
+    modalOverlay.classList.add('hidden');
+    modalOverlay.classList.remove('flex');
+  }
+
+  if (btnModalSakit) {
+    btnModalSakit.addEventListener('click', () => openModal('Pengajuan Izin Sakit'));
+  }
+  if (btnModalPulangCepat) {
+    btnModalPulangCepat.addEventListener('click', () => openModal('Dispensasi Pulang Cepat'));
+  }
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalCancel) modalCancel.addEventListener('click', closeModal);
+  if (modalSubmit) {
+    modalSubmit.addEventListener('click', () => {
+      closeModal();
+      alert('Pengajuan dispensasi magang Anda telah terkirim ke Mentor dan HRD.');
+    });
+  }
+</script></main><div class="fixed bottom-0 inset-x-0 z-50 pb-safe pointer-events-none"><div class="px-margin pb-3 pt-1"><nav class="pointer-events-auto mx-auto max-w-md w-full h-16 rounded-full bg-surface-container-lowest/55 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7),inset_0_1px_1px_0_rgba(255,255,255,0.18)] flex items-center justify-around px-2" data-active-classes="text-primary shadow-[0_0_20px_rgba(76,215,246,0.35)] bg-primary-container/15"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[52px] h-12 rounded-full transition-all active:scale-95 text-primary shadow-[0_0_20px_rgba(76,215,246,0.35)] bg-primary-container/15" data-path="beranda" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-telemetry-sm text-label-telemetry-sm tracking-tight mt-0.5">Beranda</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-path="presensi" href="#"><span class="material-symbols-outlined text-[22px]">fingerprint</span><span class="font-label-telemetry-sm text-label-telemetry-sm tracking-tight mt-0.5">Presensi</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-path="logbook" href="#"><span class="material-symbols-outlined text-[22px]">edit_note</span><span class="font-label-telemetry-sm text-label-telemetry-sm tracking-tight mt-0.5">Logbook</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-path="riwayat" href="#"><span class="material-symbols-outlined text-[22px]">history_toggle_off</span><span class="font-label-telemetry-sm text-label-telemetry-sm tracking-tight mt-0.5">Riwayat</span></a><a class="flex flex-col items-center justify-center min-w-[52px] h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all active:scale-95" data-path="profil" href="#"><span class="material-symbols-outlined text-[22px]">person</span><span class="font-label-telemetry-sm text-label-telemetry-sm tracking-tight mt-0.5">Profil</span></a></nav></div></div></body></html>

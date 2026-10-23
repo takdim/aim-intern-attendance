@@ -1,33 +1,145 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 {% block content %}
-<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
-  <div>
-    <h3 class="m-0">Manajemen User</h3>
-    <p class="page-subtitle">Kelola akun Admin, Staff, dan Peserta PKL.</p>
+<div class="flex flex-col w-full gap-6 select-none">
+
+  <!-- Header Banner -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">DIRECTORY & ACCESS CONTROL</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Manajemen Pengguna & Role</h2>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <a href="{{ url_for('admin.export_reports_csv') }}" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-high border border-white/10 text-on-surface text-xs font-semibold hover:bg-surface-bright transition-colors">
+        <span class="material-symbols-outlined text-[16px]">download</span>
+        <span>Ekspor Data</span>
+      </a>
+
+      <a href="{{ url_for('admin.create_user') }}" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-on-primary font-headline-sm text-xs font-bold shadow-md shadow-primary/25 hover:brightness-110 active:scale-95 transition-all">
+        <span class="material-symbols-outlined text-[16px]">person_add</span>
+        <span>+ Tambah Pengguna</span>
+      </a>
+    </div>
   </div>
-  <a class="btn btn-success" href="{{ url_for('admin.create_user') }}">Tambah User</a>
-</div>
-<div class="table-responsive card card-soft p-2">
-  <table class="table table-striped align-middle m-0">
-    <thead><tr><th>Nama</th><th>Email</th><th>Username</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
-    <tbody>
-      {% for user in users %}
-      <tr>
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.role.name }}</td>
-        <td>{{ 'Aktif' if user.is_active else 'Nonaktif' }}</td>
-        <td class="d-flex gap-1">
-          <a class="btn btn-sm btn-primary" href="{{ url_for('admin.edit_user', user_id=user.id) }}">Edit</a>
-          <form method="post" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Hapus user ini?')">Hapus</button>
-          </form>
-        </td>
-      </tr>
+
+  <!-- Role Tabs & Filter Bar -->
+  <section class="glass-panel p-4 rounded-3xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-xl">
+    <!-- Role Tabs -->
+    <div class="flex items-center p-1 rounded-full bg-surface-container-low/80 border border-white/10 backdrop-blur-xl text-xs overflow-x-auto">
+      <a href="{{ url_for('admin.users') }}" class="px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap {% if not request.args.get('role') %}bg-primary text-on-primary font-bold shadow-md{% else %}text-on-surface-variant hover:text-on-surface{% endif %}">
+        Semua Role
+      </a>
+      {% for role in roles %}
+        <a href="{{ url_for('admin.users', role=role.name) }}" class="px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap {% if request.args.get('role') == role.name %}bg-primary text-on-primary font-bold shadow-md{% else %}text-on-surface-variant hover:text-on-surface{% endif %}">
+          {{ role.name }}
+        </a>
       {% endfor %}
-    </tbody>
-  </table>
+    </div>
+
+    <!-- Search Input -->
+    <div class="relative w-full md:w-80">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+      <input class="w-full bg-surface-container-high/80 border border-white/10 text-on-surface pl-9 pr-3 py-2 rounded-xl text-xs focus:outline-none focus:border-primary placeholder:text-on-surface-variant" placeholder="Cari nama, email, username..." type="text" id="user-filter-input" oninput="liveFilterUsers(this.value)"/>
+    </div>
+  </section>
+
+  <!-- Users Table Stream -->
+  <section class="w-full overflow-x-auto rounded-3xl glass-panel shadow-2xl">
+    <table class="w-full text-left border-collapse" id="users-table">
+      <thead>
+        <tr class="bg-surface-container-high/60 font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase tracking-wider border-b border-white/10">
+          <th class="py-3.5 px-5">Nama & Identitas</th>
+          <th class="py-3.5 px-4">Email & Username</th>
+          <th class="py-3.5 px-4">Instansi & Prodi</th>
+          <th class="py-3.5 px-4">Role Akses</th>
+          <th class="py-3.5 px-4">Status</th>
+          <th class="py-3.5 px-5 text-right">Aksi</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/5 font-body-sm text-xs">
+        {% if users %}
+          {% for u in users %}
+            <tr class="hover:bg-surface-container-high/40 transition-colors user-table-row">
+              <td class="py-3.5 px-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-bold text-primary text-xs shrink-0">
+                    {{ (u.name[:2] if u.name else 'US') | upper }}
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="font-headline-sm text-xs font-bold text-on-surface">{{ u.name }}</span>
+                    <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">
+                      NIM/ID: {{ u.identity_number or '-' }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+
+              <td class="py-3.5 px-4 font-body-sm text-xs text-on-surface">
+                <div class="flex flex-col">
+                  <span>{{ u.email }}</span>
+                  <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">@{{ u.username }}</span>
+                </div>
+              </td>
+
+              <td class="py-3.5 px-4 font-body-sm text-xs text-on-surface-variant">
+                <div class="flex flex-col">
+                  <span class="text-on-surface font-medium truncate max-w-[150px]">{{ u.institution or '-' }}</span>
+                  <span class="text-[10px]">{{ u.department or '-' }}</span>
+                </div>
+              </td>
+
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold font-label-telemetry-sm border {% if u.role.name == 'ADMIN' %}bg-primary-container/20 border-primary/30 text-primary{% elif u.role.name == 'STAFF' %}bg-secondary-container/20 border-secondary/30 text-secondary{% else %}bg-tertiary-container/20 border-tertiary/30 text-tertiary{% endif %}">
+                  {{ u.role.name }}
+                </span>
+              </td>
+
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold {% if u.is_active %}text-tertiary bg-tertiary/10 border border-tertiary/20{% else %}text-on-surface-variant bg-surface-container-high{% endif %}">
+                  <span class="w-1.5 h-1.5 rounded-full {% if u.is_active %}bg-tertiary{% else %}bg-on-surface-variant{% endif %}"></span>
+                  {{ 'Aktif' if u.is_active else 'Nonaktif' }}
+                </span>
+              </td>
+
+              <td class="py-3.5 px-5 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <a href="{{ url_for('admin.edit_user', user_id=u.id) if u.id else '#' }}" class="w-8 h-8 rounded-lg bg-surface-container-high/60 hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors" title="Edit">
+                    <span class="material-symbols-outlined text-[16px]">edit</span>
+                  </a>
+
+                  <form method="post" action="{{ url_for('admin.delete_user', user_id=u.id) if u.id else '#' }}" onsubmit="return confirm('Hapus akses akun {{ u.name }}?');" class="inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="w-8 h-8 rounded-lg bg-surface-container-high/60 hover:bg-error/20 flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" title="Hapus">
+                      <span class="material-symbols-outlined text-[16px]">delete</span>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" class="py-8 text-center text-on-surface-variant text-xs">
+              Tidak ada data pengguna yang ditemukan.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </section>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function liveFilterUsers(query) {
+    const q = query.toLowerCase().trim();
+    const rows = document.querySelectorAll('.user-table-row');
+    rows.forEach(r => {
+      const txt = r.textContent.toLowerCase();
+      r.style.display = txt.includes(q) ? '' : 'none';
+    });
+  }
+</script>
 {% endblock %}

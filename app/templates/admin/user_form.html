@@ -1,32 +1,109 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 {% block content %}
-<div class="page-header">
-  <h3 class="mb-1">{{ 'Edit User' if user else 'Tambah User' }}</h3>
-  <p class="page-subtitle">Lengkapi identitas, role, dan status akun pengguna.</p>
+<div class="flex flex-col w-full max-w-3xl mx-auto gap-6 select-none">
+
+  <!-- Header Banner -->
+  <div class="flex items-center justify-between px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">USER ACCESS MANAGEMENT</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">
+        {{ 'Edit Pengguna' if user else 'Tambah Pengguna Baru' }}
+      </h2>
+    </div>
+    {% if user %}
+      <span class="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-telemetry-sm text-[10px] font-semibold">
+        USER ID #{{ user.id }}
+      </span>
+    {% endif %}
+  </div>
+
+  <!-- Form Card -->
+  <section class="p-6 sm:p-8 rounded-3xl glass-panel shadow-2xl">
+    <form method="post" class="flex flex-col gap-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Nama -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Nama Lengkap</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="name" value="{{ user.name if user else '' }}" required>
+        </label>
+
+        <!-- Email -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Email Resmi</span>
+          <input type="email" class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="email" value="{{ user.email if user else '' }}" required>
+        </label>
+
+        <!-- Username -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Username</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="username" value="{{ user.username if user else '' }}" required>
+        </label>
+
+        <!-- Role -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Role Hak Akses</span>
+          <select class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="role_id" required>
+            {% for role in roles %}
+              <option value="{{ role.id }}" class="bg-surface-container" {% if user and user.role_id == role.id %}selected{% endif %}>{{ role.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <!-- Password -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">
+            Kata Sandi {{ '(kosongkan jika tidak diubah)' if user else '' }}
+          </span>
+          <input type="password" class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="password" placeholder="••••••••" {{ '' if user else 'required' }}>
+        </label>
+
+        <!-- NIM / Identity -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Nomor Identitas (NIM / NIP / NISN)</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="identity_number" value="{{ user.identity_number if user else '' }}">
+        </label>
+
+        <!-- Telepon -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Nomor Telepon</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="phone" value="{{ user.phone if user else '' }}">
+        </label>
+
+        <!-- Instansi -->
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Asal Instansi / Universitas / Sekolah</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="institution" value="{{ user.institution if user else '' }}">
+        </label>
+
+        <!-- Jurusan / Prodi -->
+        <label class="sm:col-span-2 flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Program Studi / Divisi</span>
+          <input class="px-3.5 py-2.5 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-sm outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="department" value="{{ user.department if user else '' }}">
+        </label>
+      </div>
+
+      <div class="pt-2">
+        <label class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-high/40 border border-white/5 cursor-pointer">
+          <input type="checkbox" name="is_active" {% if not user or user.is_active %}checked{% endif %} class="w-4 h-4 accent-tertiary">
+          <div>
+            <span class="text-xs font-semibold text-on-surface block">Akun Aktif</span>
+            <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Izinkan pengguna melakukan login dan transaksi sistem.</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="flex items-center gap-3 pt-3">
+        <button type="submit" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline-sm text-xs sm:text-sm font-bold shadow-lg shadow-primary/25 hover:brightness-110 active:scale-95 transition-all">
+          Simpan Data Pengguna
+        </button>
+        <a href="{{ url_for('admin.users') }}" class="px-6 py-3 rounded-xl bg-surface-container border border-white/10 text-on-surface text-xs font-semibold hover:bg-surface-container-high transition-colors text-center">
+          Batal
+        </a>
+      </div>
+    </form>
+  </section>
+
 </div>
-<div class="card card-soft"><div class="card-body">
-<form method="post" class="row g-3">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-  <div class="col-md-6"><label class="form-label">Nama</label><input class="form-control" name="name" value="{{ user.name if user else '' }}" required></div>
-  <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" name="email" value="{{ user.email if user else '' }}" required></div>
-  <div class="col-md-6"><label class="form-label">Username</label><input class="form-control" name="username" value="{{ user.username if user else '' }}" required></div>
-  <div class="col-md-6"><label class="form-label">Role</label>
-    <select class="form-select" name="role_id" required>
-      {% for role in roles %}
-      <option value="{{ role.id }}" {% if user and user.role_id == role.id %}selected{% endif %}>{{ role.name }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <div class="col-md-6"><label class="form-label">Password {{ '(kosongkan jika tidak diubah)' if user else '' }}</label><input type="password" class="form-control" name="password" {{ '' if user else 'required' }}></div>
-  <div class="col-md-6"><label class="form-label">Nomor Identitas</label><input class="form-control" name="identity_number" value="{{ user.identity_number if user else '' }}"></div>
-  <div class="col-md-6"><label class="form-label">Nomor Telepon</label><input class="form-control" name="phone" value="{{ user.phone if user else '' }}"></div>
-  <div class="col-md-6"><label class="form-label">Instansi</label><input class="form-control" name="institution" value="{{ user.institution if user else '' }}"></div>
-  <div class="col-md-6"><label class="form-label">Program Studi</label><input class="form-control" name="department" value="{{ user.department if user else '' }}"></div>
-  <div class="col-12 form-check"><input class="form-check-input" type="checkbox" name="is_active" {% if not user or user.is_active %}checked{% endif %}><label class="form-check-label">User Aktif</label></div>
-  <div class="col-12 d-flex gap-2 flex-wrap">
-    <button class="btn btn-success">Simpan</button>
-    <a class="btn btn-outline-secondary" href="{{ url_for('admin.users') }}">Kembali</a>
-  </div>
-</form>
-</div></div>
 {% endblock %}

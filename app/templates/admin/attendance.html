@@ -1,128 +1,192 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 {% block content %}
-<div class="page-header">
-  <h3 class="mb-1">Rekap Mahasiswa</h3>
-  <p class="page-subtitle">Ringkasan jumlah hadir, terlambat, izin, dan status lainnya berdasarkan zona, bulan, tahun, dan mahasiswa.</p>
-</div>
+<div class="flex flex-col w-full gap-6 select-none">
 
-<div class="card card-soft mb-3">
-  <div class="card-body">
-    <form method="get" class="row g-3 align-items-end">
-      <div class="col-md-2">
-        <label class="form-label">Zona</label>
-        <select class="form-select" name="zone_id">
+  <!-- Header Banner -->
+  <div class="flex items-center justify-between px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">ATTENDANCE RECAPITULATION & LOGS</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Rekap & Log Presensi Magang</h2>
+    </div>
+    <span class="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-telemetry-sm text-[10px] font-semibold">
+      {{ attendances|length }} Log Terfilter
+    </span>
+  </div>
+
+  <!-- Filter Glass Panel -->
+  <section class="glass-panel p-5 rounded-3xl shadow-xl">
+    <form method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end">
+      <!-- Zona -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Zona Geofence</label>
+        <select class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="zone_id">
           <option value="">Semua Zona</option>
           {% for zone in zones %}
-          <option value="{{ zone.id }}" {% if filters.zone_id == (zone.id|string) %}selected{% endif %}>{{ zone.name }}</option>
+            <option value="{{ zone.id }}" {% if filters.zone_id == (zone.id|string) %}selected{% endif %}>{{ zone.name }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Bulan</label>
-        <select class="form-select" name="month">
+
+      <!-- Bulan -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Bulan</label>
+        <select class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="month">
           <option value="">Semua Bulan</option>
-          <option value="1" {% if filters.month == '1' %}selected{% endif %}>Januari</option>
-          <option value="2" {% if filters.month == '2' %}selected{% endif %}>Februari</option>
-          <option value="3" {% if filters.month == '3' %}selected{% endif %}>Maret</option>
-          <option value="4" {% if filters.month == '4' %}selected{% endif %}>April</option>
-          <option value="5" {% if filters.month == '5' %}selected{% endif %}>Mei</option>
-          <option value="6" {% if filters.month == '6' %}selected{% endif %}>Juni</option>
-          <option value="7" {% if filters.month == '7' %}selected{% endif %}>Juli</option>
-          <option value="8" {% if filters.month == '8' %}selected{% endif %}>Agustus</option>
-          <option value="9" {% if filters.month == '9' %}selected{% endif %}>September</option>
-          <option value="10" {% if filters.month == '10' %}selected{% endif %}>Oktober</option>
-          <option value="11" {% if filters.month == '11' %}selected{% endif %}>November</option>
-          <option value="12" {% if filters.month == '12' %}selected{% endif %}>Desember</option>
+          {% for m, name in [('1','Januari'), ('2','Februari'), ('3','Maret'), ('4','April'), ('5','Mei'), ('6','Juni'), ('7','Juli'), ('8','Agustus'), ('9','September'), ('10','Oktober'), ('11','November'), ('12','Desember')] %}
+            <option value="{{ m }}" {% if filters.month == m %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
         </select>
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Tahun</label>
-        <select class="form-select" name="year">
+
+      <!-- Tahun -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Tahun</label>
+        <select class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="year">
           <option value="">Semua Tahun</option>
           {% for year in year_options %}
-          <option value="{{ year }}" {% if filters.year == (year|string) %}selected{% endif %}>{{ year }}</option>
+            <option value="{{ year }}" {% if filters.year == (year|string) %}selected{% endif %}>{{ year }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Status</label>
-        <select class="form-select" name="status">
+
+      <!-- Status -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Status</label>
+        <select class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="status">
           <option value="">Semua Status</option>
-          {% for status in ['HADIR', 'TERLAMBAT', 'IZIN', 'SAKIT', 'PULANG_CEPAT', 'ALPHA', 'BELUM_ABSEN'] %}
-          <option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status }}</option>
+          {% for s in ['HADIR', 'TERLAMBAT', 'IZIN', 'SAKIT', 'PULANG_CEPAT', 'ALPHA', 'BELUM_ABSEN'] %}
+            <option value="{{ s }}" {% if filters.status == s %}selected{% endif %}>{{ s }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="col-md-2">
-        <label class="form-label">Peserta</label>
-        <select class="form-select" name="user_id">
+
+      <!-- Peserta -->
+      <div class="flex flex-col gap-1">
+        <label class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Peserta</label>
+        <select class="w-full px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:border-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" name="user_id">
           <option value="">Semua Peserta</option>
-          {% for user in users %}
-          <option value="{{ user.id }}" {% if filters.user_id == (user.id|string) %}selected{% endif %}>{{ user.name }}</option>
+          {% for u in users %}
+            <option value="{{ u.id }}" {% if filters.user_id == (u.id|string) %}selected{% endif %}>{{ u.name }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="col-md-2 d-flex gap-2">
-        <button class="btn btn-primary flex-fill">Terapkan</button>
-        <a class="btn btn-outline-secondary" href="{{ url_for('admin.attendance') }}">Reset</a>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button type="submit" class="flex-1 py-2 rounded-xl bg-primary text-on-primary font-headline-sm text-xs font-bold shadow-md shadow-primary/20 hover:brightness-110 active:scale-95 transition-all text-center">
+          Filter
+        </button>
+        <a href="{{ url_for('admin.attendance') }}" class="px-3 py-2 rounded-xl bg-surface-container border border-white/10 text-on-surface text-xs font-semibold hover:bg-surface-container-high transition-colors" title="Reset">
+          <span class="material-symbols-outlined text-sm align-middle">restart_alt</span>
+        </a>
       </div>
     </form>
-  </div>
-</div>
+  </section>
 
-<div class="table-responsive card card-soft p-2 mb-3">
-<h5 class="px-2 pt-2">Ringkasan per Mahasiswa</h5>
-<table class="table table-striped m-0">
-<thead>
-<tr>
-  <th>Nama</th>
-  <th>Total</th>
-  <th>Hadir</th>
-  <th>Terlambat</th>
-  <th>Izin</th>
-  <th>Sakit</th>
-  <th>Pulang Cepat</th>
-  <th>Alpha</th>
-</tr>
-</thead>
-<tbody>
-{% for item in summaries %}
-<tr>
-  <td>{{ item.user.name }}</td>
-  <td>{{ item.total }}</td>
-  <td>{{ item.HADIR }}</td>
-  <td>{{ item.TERLAMBAT }}</td>
-  <td>{{ item.IZIN }}</td>
-  <td>{{ item.SAKIT }}</td>
-  <td>{{ item.PULANG_CEPAT }}</td>
-  <td>{{ item.ALPHA }}</td>
-</tr>
-{% endfor %}
-{% if not summaries %}
-<tr><td colspan="8" class="text-center py-4">Belum ada rekap pada filter ini.</td></tr>
-{% endif %}
-</tbody>
-</table>
-</div>
+  <!-- Summary per Student Table -->
+  <section class="flex flex-col gap-2">
+    <div class="flex items-center gap-2 px-1">
+      <span class="material-symbols-outlined text-tertiary text-[18px]">analytics</span>
+      <h3 class="font-headline-sm text-sm font-semibold text-on-surface">Ringkasan Statistik Kehadiran per Mahasiswa</h3>
+    </div>
 
-<div class="table-responsive card card-soft p-2">
-<table class="table table-striped m-0">
-<thead><tr><th>Tanggal</th><th>Nama</th><th>Masuk</th><th>Pulang</th><th>Status</th><th>Zona</th></tr></thead>
-<tbody>
-{% for row in attendances %}
-<tr>
-  <td>{{ row.date }}</td>
-  <td>{{ row.user.name }}</td>
-  <td>{{ row.check_in.strftime('%H:%M') if row.check_in else '-' }}</td>
-  <td>{{ row.check_out.strftime('%H:%M') if row.check_out else '-' }}</td>
-  <td>{{ row.status }}</td>
-  <td>{{ row.zone.name if row.zone else '-' }}</td>
-</tr>
-{% endfor %}
-{% if not attendances %}
-<tr><td colspan="6" class="text-center py-4">Belum ada data pada filter ini.</td></tr>
-{% endif %}
-</tbody>
-</table>
+    <div class="w-full overflow-x-auto rounded-3xl glass-panel shadow-2xl">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-surface-container-high/60 font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase tracking-wider border-b border-white/10">
+            <th class="py-3 px-4">Nama Mahasiswa</th>
+            <th class="py-3 px-3 text-center">Total</th>
+            <th class="py-3 px-3 text-center text-tertiary">Hadir</th>
+            <th class="py-3 px-3 text-center text-secondary">Terlambat</th>
+            <th class="py-3 px-3 text-center text-primary">Izin</th>
+            <th class="py-3 px-3 text-center text-error">Sakit</th>
+            <th class="py-3 px-3 text-center">Pulang Cepat</th>
+            <th class="py-3 px-3 text-center text-error font-bold">Alpha</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          {% if summaries %}
+            {% for item in summaries %}
+              <tr class="hover:bg-surface-container-high/40 transition-colors">
+                <td class="py-3 px-4 font-semibold text-on-surface">{{ item.user.name }}</td>
+                <td class="py-3 px-3 text-center font-bold text-on-surface">{{ item.total }}</td>
+                <td class="py-3 px-3 text-center font-label-telemetry-sm font-bold text-tertiary">{{ item.HADIR }}</td>
+                <td class="py-3 px-3 text-center font-label-telemetry-sm font-bold text-secondary">{{ item.TERLAMBAT }}</td>
+                <td class="py-3 px-3 text-center font-label-telemetry-sm text-primary">{{ item.IZIN }}</td>
+                <td class="py-3 px-3 text-center font-label-telemetry-sm text-error">{{ item.SAKIT }}</td>
+                <td class="py-3 px-3 text-center font-label-telemetry-sm">{{ item.PULANG_CEPAT }}</td>
+                <td class="py-3 px-3 text-center font-label-telemetry-sm font-bold text-error">{{ item.ALPHA }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="py-6 text-center text-on-surface-variant text-xs">
+                Belum ada rekap kehadiran pada filter yang dipilih.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Detailed Attendance Logs Table -->
+  <section class="flex flex-col gap-2 pb-4">
+    <div class="flex items-center gap-2 px-1">
+      <span class="material-symbols-outlined text-primary text-[18px]">history</span>
+      <h3 class="font-headline-sm text-sm font-semibold text-on-surface">Log Telemetri Presensi Individu</h3>
+    </div>
+
+    <div class="w-full overflow-x-auto rounded-3xl glass-panel shadow-2xl">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-surface-container-high/60 font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase tracking-wider border-b border-white/10">
+            <th class="py-3.5 px-5">Tanggal</th>
+            <th class="py-3.5 px-4">Nama Peserta</th>
+            <th class="py-3.5 px-4">Jam Masuk</th>
+            <th class="py-3.5 px-4">Jam Pulang</th>
+            <th class="py-3.5 px-4">Status</th>
+            <th class="py-3.5 px-4">Zona Perimeter</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5 font-body-sm">
+          {% if attendances %}
+            {% for row in attendances %}
+              <tr class="hover:bg-surface-container-high/40 transition-colors">
+                <td class="py-3.5 px-5 font-headline-sm text-xs font-bold text-on-surface">
+                  {{ row.date.strftime('%d/%m/%Y') if row.date else '-' }}
+                </td>
+                <td class="py-3.5 px-4 font-semibold text-on-surface">
+                  {{ row.user.name }}
+                </td>
+                <td class="py-3.5 px-4 font-label-telemetry-sm text-on-surface">
+                  {{ row.check_in.strftime('%H:%M:%S') if row.check_in else '--:--:--' }}
+                </td>
+                <td class="py-3.5 px-4 font-label-telemetry-sm text-on-surface">
+                  {{ row.check_out.strftime('%H:%M:%S') if row.check_out else '--:--:--' }}
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold font-label-telemetry-sm border {% if row.status in ['HADIR', 'TEPAT_WAKTU'] %}bg-tertiary-container/20 border-tertiary/30 text-tertiary{% elif row.status == 'TERLAMBAT' %}bg-secondary-container/20 border-secondary/30 text-secondary{% elif row.status == 'ALPHA' %}bg-error-container/20 border-error/30 text-error{% else %}bg-primary-container/20 border-primary/30 text-primary{% endif %}">
+                    <span class="w-1.5 h-1.5 rounded-full {% if row.status in ['HADIR', 'TEPAT_WAKTU'] %}bg-tertiary{% elif row.status == 'TERLAMBAT' %}bg-secondary{% elif row.status == 'ALPHA' %}bg-error{% else %}bg-primary{% endif %}"></span>
+                    {{ row.status }}
+                  </span>
+                </td>
+                <td class="py-3.5 px-4 text-on-surface-variant font-label-telemetry-sm">
+                  {{ row.zone.name if row.zone else '-' }}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" class="py-8 text-center text-on-surface-variant text-xs">
+                Tidak ada data log presensi pada filter ini.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
 </div>
 {% endblock %}

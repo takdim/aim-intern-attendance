@@ -102,9 +102,25 @@ def dashboard():
     total_admin = User.query.join(Role).filter(Role.name == "ADMIN", User.deleted_at.is_(None)).count()
 
     today = _today_in_system_tz()
-    attendance_today = Attendance.query.filter_by(date=today).count()
-    late_today = Attendance.query.filter_by(date=today, status="TERLAMBAT").count()
+    today_attendances = Attendance.query.filter_by(date=today).order_by(Attendance.id.desc()).all()
+    attendance_today = len(today_attendances)
+    late_today = sum(1 for a in today_attendances if a.status == "TERLAMBAT")
     pending_leave = LeaveRequest.query.filter_by(status="PENDING").count()
+
+    zones = Zone.query.order_by(Zone.id.asc()).all()
+    primary_zone = zones[0] if zones else None
+    setting = AttendanceSetting.get_active()
+
+    in_zone_count = sum(
+        1 for a in today_attendances
+        if a.check_in_distance is not None and a.zone and a.check_in_distance <= a.zone.radius
+    )
+    in_zone_ratio = (
+        round(in_zone_count / max(attendance_today, 1) * 100) if attendance_today > 0 else 100
+    )
+
+    recent_users = User.query.filter(User.deleted_at.is_(None)).order_by(User.id.desc()).limit(10).all()
+    roles = Role.query.order_by(Role.name.asc()).all()
 
     return render_template(
         "admin/dashboard.html",
@@ -115,7 +131,17 @@ def dashboard():
         attendance_today=attendance_today,
         late_today=late_today,
         pending_leave=pending_leave,
+        today_attendances=today_attendances,
+        zones=zones,
+        primary_zone=primary_zone,
+        setting=setting,
+        in_zone_count=in_zone_count,
+        in_zone_ratio=in_zone_ratio,
+        recent_users=recent_users,
+        roles=roles,
+        today=today,
     )
+
 
 
 @admin_bp.route("/users")

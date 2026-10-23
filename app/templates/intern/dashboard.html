@@ -1,27 +1,587 @@
-{% extends 'base.html' %}
+{% extends 'intern/base_intern.html' %}
 {% block content %}
-<div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-2">
-  <div>
-    <h3 class="mb-1">Dashboard Peserta</h3>
-    <p class="page-subtitle">Ringkasan status kehadiran hari ini.</p>
+<div class="flex flex-col w-full gap-5 select-none">
+
+  <!-- Dynamic Island Chrono & Geofence Beacon Header -->
+  <section class="flex flex-col gap-2.5">
+    <div class="relative overflow-hidden rounded-2xl glass-panel p-4 shadow-[0_12px_40px_rgba(0,0,0,0.65)]">
+      <div class="glass-specular-edge"></div>
+      
+      <div class="flex flex-col gap-3">
+        <!-- Live Chrono Island Pill & GNSS Status -->
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-xl border border-white/10 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.14)]">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
+            </span>
+            <span class="font-label-telemetry-lg text-xs sm:text-sm tracking-wider text-on-surface tabular-nums font-semibold" id="live-wita-clock">
+              --:--:-- WITA
+            </span>
+          </div>
+
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-container/30 border border-secondary/30 text-on-secondary-container text-xs shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.12)]">
+            <span class="material-symbols-outlined text-[15px] text-secondary">satellite_alt</span>
+            <span class="font-label-telemetry-sm text-[10px] uppercase font-semibold" id="gnss-lock-label">GNSS MENCARI...</span>
+          </div>
+        </div>
+
+        <!-- Geofence Perimeter Badge -->
+        <div class="flex items-center justify-between p-3 rounded-xl bg-tertiary-container/15 text-on-tertiary-container border border-tertiary/20 backdrop-blur-2xl shadow-[inset_0_1px_1px_0_rgba(78,222,163,0.25)]">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-lg bg-tertiary/20 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-tertiary text-[18px]">radar</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="font-headline-sm text-xs text-tertiary font-semibold truncate" id="beacon-zone-name">
+                  {{ primary_zone.name if primary_zone else 'Kantor Utama' }}
+                </span>
+                <span class="font-label-telemetry-sm text-[10px] text-tertiary/80">
+                  (R: {{ primary_zone.radius|int if primary_zone else 100 }}m)
+                </span>
+              </div>
+              <p class="font-label-telemetry-sm text-[11px] text-on-surface-variant truncate">
+                Jarak Anda: <span class="text-tertiary font-semibold" id="user-distance-display">Mendeteksi...</span> • 
+                <span id="zone-status-pill" class="text-tertiary font-medium">MEMERIKSA ZONA</span>
+              </p>
+            </div>
+          </div>
+          <span class="px-2 py-0.5 rounded-md bg-tertiary/20 border border-tertiary/40 text-tertiary font-label-telemetry-sm text-[10px] font-bold tracking-tight uppercase" id="badge-valid-status">
+            GPS READY
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intern Greeting Profile Strip -->
+    <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-surface-container-high/40 border border-white/10 backdrop-blur-xl shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.1)]">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 rounded-full bg-primary-container/20 border border-primary/30 flex items-center justify-center text-primary font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)] shrink-0 text-xs">
+          {{ (current_user.name[:2] if current_user and current_user.name else 'IN') | upper }}
+        </div>
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-1">
+            <span class="font-headline-sm text-sm text-on-surface font-semibold truncate">Halo, {{ current_user.name }}</span>
+            <span class="text-xs">👋</span>
+          </div>
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant truncate">
+            ID: {{ current_user.identity_number or current_user.username }} • {{ (current_user.internship.division if current_user.internship and current_user.internship.division else (current_user.department or 'Internship')) }}
+          </span>
+        </div>
+      </div>
+      <div class="shrink-0 flex items-center">
+        <span class="px-2 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-telemetry-sm text-[10px] font-medium">
+          {{ current_user.institution or 'Magang PKL' }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Liquid Glass Biometric Punch Card -->
+  <section class="relative rounded-2xl glass-panel p-5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden">
+    <div class="glass-specular-edge"></div>
+    <div class="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-primary-container/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-16 -left-12 w-52 h-52 rounded-full bg-secondary-container/25 blur-3xl pointer-events-none"></div>
+
+    <!-- Punch Mode Switcher Tabs -->
+    <div class="relative z-10 flex p-1 rounded-full bg-surface-container-high/60 backdrop-blur-2xl border border-white/10 shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.12)] max-w-xs mx-auto mb-5">
+      <button type="button" class="flex-1 py-1.5 rounded-full text-center font-headline-sm text-xs sm:text-sm font-semibold transition-all duration-300 bg-primary text-on-primary shadow-[0_4px_16px_rgba(76,215,246,0.35)]" id="btn-mode-masuk">
+        Absen Masuk
+      </button>
+      <button type="button" class="flex-1 py-1.5 rounded-full text-center font-headline-sm text-xs sm:text-sm font-medium transition-all duration-300 text-on-surface-variant hover:text-on-surface" id="btn-mode-pulang">
+        Absen Pulang
+      </button>
+    </div>
+
+    <!-- Biometric Radar Interactive Core -->
+    <div class="relative z-10 flex flex-col items-center justify-center my-2">
+      <!-- Concentric Aura Circles -->
+      <div class="relative flex items-center justify-center w-52 h-52 sm:w-56 sm:h-56">
+        <div class="absolute inset-0 rounded-full bg-primary/5 animate-ping opacity-35" style="animation-duration: 3.2s;"></div>
+        <div class="absolute inset-4 rounded-full bg-tertiary/10 blur-md"></div>
+        <div class="absolute inset-2 rounded-full bg-surface-container-high/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25)] border border-white/5"></div>
+        
+        <!-- Main Touch / Scan Action Disc -->
+        <button type="button" aria-label="Lakukan Absensi Biometrik" class="relative group w-40 h-40 sm:w-44 sm:h-44 rounded-full bg-gradient-to-br from-surface-container-high/90 to-surface-container-lowest/80 backdrop-blur-3xl shadow-[0_12px_45px_rgba(0,0,0,0.8),inset_0_2px_4px_0_rgba(255,255,255,0.35),0_0_28px_rgba(76,215,246,0.2)] border border-white/15 flex flex-col items-center justify-center active:scale-95 transition-all duration-300 cursor-pointer overflow-hidden" id="biometric-trigger">
+          
+          <!-- Continuous Rotating Laser Sweep Line -->
+          <div class="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+            <div class="w-full h-full bg-gradient-to-r from-transparent via-primary/25 to-transparent animate-spin" style="animation-duration: 5s;"></div>
+          </div>
+
+          <!-- Holographic Biometric Ring SVG & Fingerprint Core -->
+          <div class="relative z-10 flex flex-col items-center justify-center gap-1 pointer-events-none">
+            <div class="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+              <svg class="w-12 h-12 sm:w-14 sm:h-14 text-primary group-hover:text-tertiary transition-colors duration-300 drop-shadow-[0_0_12px_rgba(76,215,246,0.7)]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 0 0-10 10c0 3.2 1.5 6 3.8 7.8"></path>
+                <path d="M12 6a6 6 0 0 0-6 6c0 1.9.9 3.6 2.3 4.7"></path>
+                <path d="M12 10a2 2 0 0 0-2 2c0 .8.4 1.5 1 1.9"></path>
+                <path d="M14 12c0 2.2-1.8 4-4 4"></path>
+                <path d="M18 12c0 4.4-3.6 8-8 8-1.5 0-3-.4-4.2-1.2"></path>
+                <path d="M22 12c0 5.5-4.5 10-10 10-2.4 0-4.6-.9-6.3-2.3"></path>
+                <line x1="2" x2="4" y1="12" y2="12"></line>
+                <line x1="20" x2="22" y1="12" y2="12"></line>
+              </svg>
+              <!-- Center Laser Scanning Particle -->
+              <div class="hidden absolute inset-x-1 h-0.5 bg-tertiary shadow-[0_0_10px_#4edea3] animate-pulse" id="scan-particle"></div>
+            </div>
+
+            <span class="font-headline-sm text-sm sm:text-base font-bold text-on-surface tracking-wide drop-shadow-md" id="trigger-label">
+              {% if today_attendance and today_attendance.check_in %}
+                {% if today_attendance.check_out %}
+                  SUDAH SELESAI
+                {% else %}
+                  TAP PULANG
+                {% endif %}
+              {% else %}
+                TAP MASUK
+              {% endif %}
+            </span>
+            <span class="font-label-telemetry-sm text-[9px] sm:text-[10px] text-primary group-hover:text-tertiary font-semibold uppercase tracking-widest" id="trigger-sublabel">
+              GEOFENCE SECURE
+            </span>
+          </div>
+
+          <!-- Bottom Audio & Haptic Feedback Ripples -->
+          <div class="absolute bottom-2.5 flex items-center gap-1">
+            <span class="w-1 h-2 rounded-full bg-primary/70 animate-bounce" style="animation-delay: 0.1s"></span>
+            <span class="w-1 h-3 rounded-full bg-primary animate-bounce" style="animation-delay: 0.2s"></span>
+            <span class="w-1 h-2 rounded-full bg-primary/70 animate-bounce" style="animation-delay: 0.3s"></span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Live Success/Feedback Alert (Hidden by default) -->
+      <div class="hidden mt-3 px-4 py-2 rounded-xl bg-tertiary-container/30 border border-tertiary/40 text-on-tertiary-container backdrop-blur-xl shadow-[0_6px_20px_rgba(27,189,133,0.3)] items-center gap-2" id="feedback-toast">
+        <span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+        <span class="font-body-sm text-xs font-semibold text-tertiary" id="feedback-toast-text">Biometrik Terverifikasi! Presensi Tersimpan.</span>
+      </div>
+    </div>
+
+    <!-- Operating Window & Today Status Strip -->
+    <div class="relative z-10 mt-4 pt-3 flex flex-col gap-2 bg-surface-container-high/30 border border-white/5 rounded-xl p-3 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
+      <div class="flex items-center justify-between text-xs sm:text-sm">
+        <span class="text-on-surface-variant flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+          Shift Normal Magang
+        </span>
+        <span class="font-label-telemetry-sm text-[11px] text-on-surface font-semibold">
+          {{ check_in_time.strftime('%H:%M') }} — {{ check_out_time.strftime('%H:%M') }}
+        </span>
+      </div>
+      <div class="flex items-center justify-between text-xs sm:text-sm">
+        <span class="text-on-surface-variant flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px] text-tertiary">timelapse</span>
+          Toleransi Keterlambatan
+        </span>
+        <span class="font-label-telemetry-sm text-[11px] text-tertiary font-medium">
+          {{ setting.late_tolerance_minutes }} Menit
+        </span>
+      </div>
+      <div class="border-t border-white/10 pt-2 flex items-center justify-between text-xs sm:text-sm">
+        <span class="text-on-surface-variant">Status Hari Ini:</span>
+        <div class="flex items-center gap-2">
+          {% if today_attendance %}
+            <span class="font-label-telemetry-sm text-[11px] text-on-surface font-medium">
+              In: {{ today_attendance.check_in.strftime('%H:%M') if today_attendance.check_in else '--:--' }} | 
+              Out: {{ today_attendance.check_out.strftime('%H:%M') if today_attendance.check_out else '--:--' }}
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase {% if today_attendance.status in ['HADIR', 'TEPAT_WAKTU'] %}bg-tertiary/20 text-tertiary border border-tertiary/30{% elif today_attendance.status == 'TERLAMBAT' %}bg-secondary/20 text-secondary border border-secondary/30{% else %}bg-primary/20 text-primary border border-primary/30{% endif %}">
+              {{ today_attendance.status }}
+            </span>
+          {% else %}
+            <span class="text-on-surface-variant text-[11px]">Belum Absen Hari Ini</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Stats Liquid Metric Grid -->
+  <section class="grid grid-cols-3 gap-2.5">
+    <!-- Stat 1: Kehadiran -->
+    <div class="flex flex-col p-3 rounded-2xl glass-panel shadow-[0_8px_24px_rgba(0,0,0,0.5)] min-w-0">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-body-sm text-[11px] sm:text-xs text-on-surface-variant truncate">Kehadiran</span>
+        <span class="material-symbols-outlined text-tertiary text-[18px]">verified</span>
+      </div>
+      <span class="font-display-hero-mobile text-xl sm:text-2xl font-bold text-on-surface tracking-tight">{{ attendance_rate }}%</span>
+      <span class="font-label-telemetry-sm text-[10px] text-tertiary font-medium mt-1 truncate">Total {{ total_records }} Hari</span>
+    </div>
+
+    <!-- Stat 2: Terlambat -->
+    <div class="flex flex-col p-3 rounded-2xl glass-panel shadow-[0_8px_24px_rgba(0,0,0,0.5)] min-w-0">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-body-sm text-[11px] sm:text-xs text-on-surface-variant truncate">Terlambat</span>
+        <span class="material-symbols-outlined text-secondary text-[18px]">warning</span>
+      </div>
+      <span class="font-display-hero-mobile text-xl sm:text-2xl font-bold text-on-surface tracking-tight">{{ late_count }} <span class="text-xs font-normal text-on-surface-variant">Hari</span></span>
+      <span class="font-label-telemetry-sm text-[10px] text-on-secondary-container mt-1 truncate">
+        {% if late_count == 0 %}Sempurna{% else %}Perlu evaluasi{% endif %}
+      </span>
+    </div>
+
+    <!-- Stat 3: Sisa Izin/Cuti -->
+    <div class="flex flex-col p-3 rounded-2xl glass-panel shadow-[0_8px_24px_rgba(0,0,0,0.5)] min-w-0">
+      <div class="flex items-center justify-between mb-1">
+        <span class="font-body-sm text-[11px] sm:text-xs text-on-surface-variant truncate">Izin / Cuti</span>
+        <span class="material-symbols-outlined text-primary text-[18px]">event_available</span>
+      </div>
+      <span class="font-display-hero-mobile text-xl sm:text-2xl font-bold text-on-surface tracking-tight">{{ approved_leaves }} <span class="text-xs font-normal text-on-surface-variant">ACC</span></span>
+      <span class="font-label-telemetry-sm text-[10px] text-primary font-medium mt-1 truncate">Disetujui</span>
+    </div>
+  </section>
+
+  <!-- Floating Action Pills: Izin & Dispensasi Modal Triggers -->
+  <section class="flex flex-col gap-2">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="font-headline-sm text-xs sm:text-sm text-on-surface font-semibold">Pengajuan Cepat Dispensasi</h2>
+      <span class="font-label-telemetry-sm text-[10px] text-primary uppercase">E-Form PKL</span>
+    </div>
+    <div class="grid grid-cols-2 gap-2.5">
+      <!-- Sakit Button Pill -->
+      <button type="button" class="group flex flex-col p-3 rounded-2xl bg-surface-container-high/50 hover:bg-surface-container-high/80 border border-white/10 backdrop-blur-2xl text-left shadow-[0_10px_25px_rgba(0,0,0,0.5)] active:scale-98 transition-all" id="btn-modal-sakit">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="w-7 h-7 rounded-lg bg-secondary-container/40 flex items-center justify-center text-secondary group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[17px]">medical_services</span>
+          </div>
+          <span class="font-headline-sm text-xs sm:text-sm font-semibold text-on-surface truncate">Izin Sakit</span>
+        </div>
+        <p class="font-body-sm text-[11px] text-on-surface-variant leading-tight line-clamp-2">
+          Upload surat dokter faskes
+        </p>
+      </button>
+
+      <!-- Pulang Cepat Pill -->
+      <button type="button" class="group flex flex-col p-3 rounded-2xl bg-surface-container-high/50 hover:bg-surface-container-high/80 border border-white/10 backdrop-blur-2xl text-left shadow-[0_10px_25px_rgba(0,0,0,0.5)] active:scale-98 transition-all" id="btn-modal-pulang-cepat">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="w-7 h-7 rounded-lg bg-primary-container/25 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+            <span class="material-symbols-outlined text-[17px]">door_open</span>
+          </div>
+          <span class="font-headline-sm text-xs sm:text-sm font-semibold text-on-surface truncate">Pulang Cepat</span>
+        </div>
+        <p class="font-body-sm text-[11px] text-on-surface-variant leading-tight line-clamp-2">
+          Checkout sebelum {{ check_out_time.strftime('%H:%M') }}
+        </p>
+      </button>
+    </div>
+  </section>
+
+  <!-- Recent History Glass Stream (Riwayat Presensi Terkini) -->
+  <section class="flex flex-col gap-2.5 pb-2">
+    <div class="flex items-center justify-between px-1">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[18px]">history</span>
+        <h2 class="font-headline-sm text-xs sm:text-sm text-on-surface font-semibold">Riwayat Presensi Terkini</h2>
+      </div>
+      <a class="font-label-telemetry-sm text-[11px] text-primary hover:text-primary-fixed-dim transition-colors flex items-center gap-0.5" href="{{ url_for('intern.history') }}">
+        Lihat Semua <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+      </a>
+    </div>
+
+    <!-- History Stream Glass Stack -->
+    <div class="flex flex-col gap-2">
+      {% if recent_attendances %}
+        {% for row in recent_attendances %}
+          <div class="relative overflow-hidden rounded-2xl glass-panel p-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.4)]">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-headline-sm text-xs sm:text-sm font-bold text-on-surface">{{ row.date.strftime('%d %b %Y') }}</span>
+                  {% if today_attendance and row.date == today_attendance.date %}
+                    <span class="px-1.5 py-0.2 rounded text-[9px] bg-primary/20 text-primary font-semibold">HARI INI</span>
+                  {% endif %}
+                </div>
+                <div class="flex items-center gap-3 text-xs text-on-surface-variant">
+                  <span>Masuk: <strong class="text-on-surface font-label-telemetry-sm">{{ row.check_in.strftime('%H:%M') if row.check_in else '--:--' }}</strong></span>
+                  <span>•</span>
+                  <span>Pulang: <strong class="text-on-surface font-label-telemetry-sm">{{ row.check_out.strftime('%H:%M') if row.check_out else '--:--' }}</strong></span>
+                </div>
+                {% if row.check_in_distance is not none %}
+                  <span class="font-label-telemetry-sm text-[10px] text-tertiary mt-1">Geo-radius: {{ row.check_in_distance|round(1) }} meter</span>
+                {% endif %}
+              </div>
+
+              <!-- Status Badge -->
+              <div class="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold font-label-telemetry-sm border {% if row.status in ['HADIR', 'TEPAT_WAKTU'] %}bg-tertiary-container/30 border-tertiary/40 text-tertiary shadow-[0_0_12px_rgba(27,189,133,0.25)]{% elif row.status == 'TERLAMBAT' %}bg-secondary-container/30 border-secondary/40 text-secondary shadow-[0_0_12px_rgba(196,171,255,0.2)]{% elif row.status == 'PULANG_CEPAT' %}bg-primary-container/25 border-primary/40 text-primary{% else %}bg-surface-container-high/60 border-white/10 text-on-surface-variant{% endif %}">
+                <span class="w-1.5 h-1.5 rounded-full {% if row.status in ['HADIR', 'TEPAT_WAKTU'] %}bg-tertiary{% elif row.status == 'TERLAMBAT' %}bg-secondary{% else %}bg-primary{% endif %}"></span>
+                {{ row.status }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="p-4 rounded-2xl glass-panel text-center text-xs text-on-surface-variant">
+          Belum ada riwayat absensi yang tercatat.
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+</div>
+
+<!-- Interactive Slide-Up Micro Modal for Izin/Dispensasi -->
+<div class="fixed inset-0 z-50 bg-surface-container-lowest/80 backdrop-blur-md hidden flex-col justify-end p-4 transition-all duration-300" id="izin-modal-overlay">
+  <div class="w-full max-w-lg mx-auto rounded-3xl bg-surface-container-high/95 backdrop-blur-3xl border border-white/15 p-5 shadow-[0_25px_60px_rgba(0,0,0,0.85)] flex flex-col gap-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-[18px]">post_add</span>
+        </div>
+        <h3 class="font-headline-sm text-sm sm:text-base text-on-surface font-bold" id="modal-title">Pengajuan Dispensasi</h3>
+      </div>
+      <button type="button" class="w-8 h-8 rounded-full bg-surface-container/60 text-on-surface-variant flex items-center justify-center hover:text-on-surface" id="modal-close">
+        <span class="material-symbols-outlined text-sm">close</span>
+      </button>
+    </div>
+
+    <!-- Quick Form -->
+    <form method="post" action="{{ url_for('intern.leave') }}" enctype="multipart/form-data" class="flex flex-col gap-3" id="quick-leave-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="request_type" id="modal-request-type" value="SAKIT">
+
+      <div class="grid grid-cols-2 gap-2">
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Tanggal Mulai</span>
+          <input class="px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" type="date" name="start_date" id="modal-start-date" required/>
+        </label>
+        <label class="flex flex-col gap-1">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Tanggal Selesai</span>
+          <input class="px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" type="date" name="end_date" id="modal-end-date" required/>
+        </label>
+      </div>
+
+      <div id="checkout-time-field" class="hidden flex-col gap-1">
+        <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Jam Pulang Rencana</span>
+        <input class="px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]" type="time" name="planned_checkout" id="modal-checkout-time"/>
+      </div>
+
+      <label class="flex flex-col gap-1">
+        <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Keterangan Alasan</span>
+        <textarea class="px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs outline-none focus:ring-1 focus:ring-primary shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] resize-none" name="reason" placeholder="Tuliskan keterangan detail alasan Anda..." rows="2" required></textarea>
+      </label>
+
+      <div class="flex flex-col gap-1">
+        <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Unggah Dokumen Bukti (PDF / JPG / PNG)</span>
+        <input class="px-3 py-2 rounded-xl bg-surface-container-lowest/80 border border-white/10 text-on-surface text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:bg-primary/20 file:text-primary cursor-pointer" type="file" name="attachment"/>
+      </div>
+
+      <div class="flex items-center gap-2 pt-2">
+        <button type="button" class="flex-1 py-2 rounded-full bg-surface-container text-on-surface text-xs font-semibold active:scale-95 transition-transform" id="modal-cancel-btn">
+          Batal
+        </button>
+        <button type="submit" class="flex-1 py-2 rounded-full bg-primary text-on-primary text-xs font-bold shadow-[0_4px_16px_rgba(76,215,246,0.35)] active:scale-95 transition-transform">
+          Kirim Pengajuan
+        </button>
+      </div>
+    </form>
   </div>
-  <span class="badge-soft">Intern Space</span>
 </div>
-<div class="card card-soft mb-3"><div class="card-body">
-  <h5 class="mb-3">Status Hari Ini</h5>
-  {% if today_attendance %}
-  <ul class="list-glass d-grid gap-2">
-    <li>Status: <strong>{{ today_attendance.status }}</strong></li>
-    <li>Masuk: {{ today_attendance.check_in.strftime('%H:%M') if today_attendance.check_in else 'Belum' }}</li>
-    <li>Pulang: {{ today_attendance.check_out.strftime('%H:%M') if today_attendance.check_out else 'Belum' }}</li>
-  </ul>
-  {% else %}
-  <p class="mb-0">Belum ada absensi hari ini.</p>
-  {% endif %}
-</div></div>
-<div class="d-flex gap-2 flex-wrap">
-  <a class="btn btn-success" href="{{ url_for('intern.attendance_page') }}">Halaman Absensi</a>
-  <a class="btn btn-outline-primary" href="{{ url_for('intern.history') }}">Histori Absensi</a>
-  <a class="btn btn-outline-secondary" href="{{ url_for('intern.leave') }}">Pengajuan Izin</a>
-</div>
+
+<!-- Hidden Actual Form for Biometric Check-in / Check-out POST -->
+<form id="real-attendance-form" method="post" action="{{ url_for('intern.do_check_in') }}" class="hidden">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="latitude" id="geo-lat-input" value="0">
+  <input type="hidden" name="longitude" id="geo-lng-input" value="0">
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 1. Timezone-aware Live Digital Clock
+  {% set tz_offset = 8 if 'Makassar' in (setting.timezone if setting else '') else (7 if 'Jakarta' in (setting.timezone if setting else '') else 9) %}
+  {% set tz_name = 'WITA' if tz_offset == 8 else ('WIB' if tz_offset == 7 else 'WIT') %}
+  initLiveClock('live-wita-clock', {{ tz_offset }}, '{{ tz_name }}');
+
+  // 2. Active Zone Configuration
+  const TARGET_ZONE = {
+    name: "{{ primary_zone.name if primary_zone else 'Kantor Utama' }}",
+    lat: {{ primary_zone.latitude if primary_zone else -5.147665 }},
+    lng: {{ primary_zone.longitude if primary_zone else 119.432731 }},
+    radius: {{ primary_zone.radius if primary_zone else 100 }}
+  };
+
+  let currentUserCoords = null;
+  const userDistanceDisplay = document.getElementById('user-distance-display');
+  const zoneStatusPill = document.getElementById('zone-status-pill');
+  const badgeValidStatus = document.getElementById('badge-valid-status');
+  const gnssLockLabel = document.getElementById('gnss-lock-label');
+  const latInput = document.getElementById('geo-lat-input');
+  const lngInput = document.getElementById('geo-lng-input');
+
+  function updateGeolocation() {
+    if (!navigator.geolocation) {
+      if (gnssLockLabel) gnssLockLabel.textContent = 'GPS TIDAK TERSEDIA';
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        currentUserCoords = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy
+        };
+        latInput.value = pos.coords.latitude;
+        lngInput.value = pos.coords.longitude;
+
+        if (gnssLockLabel) {
+          gnssLockLabel.textContent = `GNSS LOCK ±${Math.round(pos.coords.accuracy)}m`;
+        }
+
+        const dist = haversineMeters(pos.coords.latitude, pos.coords.longitude, TARGET_ZONE.lat, TARGET_ZONE.lng);
+        if (userDistanceDisplay) {
+          userDistanceDisplay.textContent = `${dist}m`;
+        }
+
+        if (dist <= TARGET_ZONE.radius) {
+          if (zoneStatusPill) {
+            zoneStatusPill.textContent = 'DALAM ZONA';
+            zoneStatusPill.className = 'text-tertiary font-bold';
+          }
+          if (badgeValidStatus) {
+            badgeValidStatus.textContent = 'VALID';
+            badgeValidStatus.className = 'px-2 py-0.5 rounded-md bg-tertiary text-on-tertiary font-label-telemetry-sm text-[10px] font-bold tracking-tight uppercase shadow-[0_0_10px_rgba(78,222,163,0.4)]';
+          }
+        } else {
+          if (zoneStatusPill) {
+            zoneStatusPill.textContent = 'DI LUAR ZONA';
+            zoneStatusPill.className = 'text-secondary font-bold';
+          }
+          if (badgeValidStatus) {
+            badgeValidStatus.textContent = 'OUT OF ZONE';
+            badgeValidStatus.className = 'px-2 py-0.5 rounded-md bg-secondary/30 text-secondary border border-secondary/40 font-label-telemetry-sm text-[10px] font-bold tracking-tight uppercase';
+          }
+        }
+      },
+      (err) => {
+        if (gnssLockLabel) gnssLockLabel.textContent = 'IZIN GPS DIBUTUHKAN';
+        if (userDistanceDisplay) userDistanceDisplay.textContent = 'GPS Off';
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+    );
+  }
+  updateGeolocation();
+  setInterval(updateGeolocation, 15000);
+
+  // 3. Masuk vs Pulang Switcher Tabs
+  let currentMode = {% if today_attendance and today_attendance.check_in and not today_attendance.check_out %}'pulang'{% else %}'masuk'{% endif %};
+  const btnMasuk = document.getElementById('btn-mode-masuk');
+  const btnPulang = document.getElementById('btn-mode-pulang');
+  const triggerLabel = document.getElementById('trigger-label');
+  const triggerSublabel = document.getElementById('trigger-sublabel');
+  const biometricTrigger = document.getElementById('biometric-trigger');
+  const scanParticle = document.getElementById('scan-particle');
+  const feedbackToast = document.getElementById('feedback-toast');
+  const feedbackToastText = document.getElementById('feedback-toast-text');
+  const realAttendanceForm = document.getElementById('real-attendance-form');
+
+  function setMode(mode) {
+    currentMode = mode;
+    if (mode === 'masuk') {
+      btnMasuk.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-xs sm:text-sm font-semibold transition-all duration-300 bg-primary text-on-primary shadow-[0_4px_16px_rgba(76,215,246,0.35)]';
+      btnPulang.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-xs sm:text-sm font-medium transition-all duration-300 text-on-surface-variant hover:text-on-surface';
+      realAttendanceForm.action = "{{ url_for('intern.do_check_in') }}";
+      {% if today_attendance and today_attendance.check_in %}
+        triggerLabel.textContent = 'SUDAH MASUK';
+      {% else %}
+        triggerLabel.textContent = 'TAP MASUK';
+      {% endif %}
+    } else {
+      btnPulang.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-xs sm:text-sm font-semibold transition-all duration-300 bg-secondary text-on-secondary shadow-[0_4px_16px_rgba(208,188,255,0.35)]';
+      btnMasuk.className = 'flex-1 py-1.5 rounded-full text-center font-headline-sm text-xs sm:text-sm font-medium transition-all duration-300 text-on-surface-variant hover:text-on-surface';
+      realAttendanceForm.action = "{{ url_for('intern.do_check_out') }}";
+      {% if today_attendance and today_attendance.check_out %}
+        triggerLabel.textContent = 'SUDAH PULANG';
+      {% else %}
+        triggerLabel.textContent = 'TAP PULANG';
+      {% endif %}
+    }
+  }
+
+  if (btnMasuk && btnPulang) {
+    btnMasuk.addEventListener('click', () => setMode('masuk'));
+    btnPulang.addEventListener('click', () => setMode('pulang'));
+    setMode(currentMode);
+  }
+
+  // 4. Biometric Scan Action & Form Submission
+  if (biometricTrigger) {
+    biometricTrigger.addEventListener('click', () => {
+      // Prompt GPS if not available
+      if (!currentUserCoords) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            currentUserCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            latInput.value = pos.coords.latitude;
+            lngInput.value = pos.coords.longitude;
+            executeScan();
+          },
+          () => {
+            alert('Izin lokasi GPS diperlukan untuk verifikasi presensi liquid glass.');
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        executeScan();
+      }
+    });
+  }
+
+  function executeScan() {
+    scanParticle.classList.remove('hidden');
+    triggerLabel.textContent = 'MEMINDAI...';
+    triggerSublabel.textContent = 'BIOMETRIC SCANNING';
+
+    // Submit form after animation
+    setTimeout(() => {
+      realAttendanceForm.submit();
+    }, 900);
+  }
+
+  // 5. Modal Dialog Handlers
+  const modalOverlay = document.getElementById('izin-modal-overlay');
+  const modalTitle = document.getElementById('modal-title');
+  const modalReqType = document.getElementById('modal-request-type');
+  const checkoutTimeField = document.getElementById('checkout-time-field');
+  const btnModalSakit = document.getElementById('btn-modal-sakit');
+  const btnModalPulangCepat = document.getElementById('btn-modal-pulang-cepat');
+  const modalClose = document.getElementById('modal-close');
+  const modalCancel = document.getElementById('modal-cancel-btn');
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const startDateInput = document.getElementById('modal-start-date');
+  const endDateInput = document.getElementById('modal-end-date');
+  if (startDateInput) startDateInput.value = todayStr;
+  if (endDateInput) endDateInput.value = todayStr;
+
+  function openModal(type, title) {
+    if (modalTitle) modalTitle.textContent = title;
+    if (modalReqType) modalReqType.value = type;
+    if (type === 'PULANG_CEPAT') {
+      checkoutTimeField.classList.remove('hidden');
+      checkoutTimeField.classList.add('flex');
+    } else {
+      checkoutTimeField.classList.add('hidden');
+      checkoutTimeField.classList.remove('flex');
+    }
+    modalOverlay.classList.remove('hidden');
+    modalOverlay.classList.add('flex');
+  }
+
+  function closeModal() {
+    modalOverlay.classList.add('hidden');
+    modalOverlay.classList.remove('flex');
+  }
+
+  if (btnModalSakit) {
+    btnModalSakit.addEventListener('click', () => openModal('SAKIT', 'Pengajuan Izin Sakit'));
+  }
+  if (btnModalPulangCepat) {
+    btnModalPulangCepat.addEventListener('click', () => openModal('PULANG_CEPAT', 'Dispensasi Pulang Cepat'));
+  }
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalCancel) modalCancel.addEventListener('click', closeModal);
+</script>
 {% endblock %}

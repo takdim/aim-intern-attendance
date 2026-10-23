@@ -1,13 +1,132 @@
-{% extends 'base.html' %}
+{% extends 'intern/base_intern.html' %}
 {% block content %}
-<div class="page-header">
-  <h3 class="mb-1">Profil</h3>
-  <p class="page-subtitle">Informasi akun peserta PKL atau magang.</p>
+<div class="flex flex-col w-full gap-5 select-none">
+
+  <!-- Header Banner -->
+  <div class="flex items-center justify-between px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-primary font-semibold">INTERN PROFILE & CREDENTIALS</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Kartu Identitas Digital</h2>
+    </div>
+    <span class="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary font-label-telemetry-sm text-[10px] font-semibold">
+      VERIFIED ID
+    </span>
+  </div>
+
+  <!-- Holographic Intern Cyber ID Card -->
+  <section class="relative rounded-3xl glass-panel p-6 shadow-[0_25px_60px_rgba(0,0,0,0.8)] overflow-hidden">
+    <div class="glass-specular-edge"></div>
+    <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full bg-primary/20 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-secondary-container/25 blur-3xl pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col gap-5">
+      <!-- Top Hologram Chip & QR / NFC Icon -->
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-7 rounded-lg bg-gradient-to-r from-amber-400/40 via-yellow-200/30 to-amber-500/40 border border-amber-300/40 flex items-center justify-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.4)]">
+            <span class="material-symbols-outlined text-amber-300 text-[16px]">contactless</span>
+          </div>
+          <span class="font-label-telemetry-sm text-[10px] tracking-widest text-primary font-bold uppercase">AIM SMART ID</span>
+        </div>
+        <div class="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-container/30 border border-tertiary/40 text-tertiary font-label-telemetry-sm text-[10px] font-bold">
+          <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          {{ (current_user.internship.status if current_user.internship and current_user.internship.status else 'ACTIVE') | upper }}
+        </div>
+      </div>
+
+      <!-- Avatar & Name Profile -->
+      <div class="flex items-center gap-4">
+        <div class="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-container/40 to-surface-container-high border-2 border-primary/50 flex items-center justify-center text-primary font-bold text-xl shadow-[0_0_20px_rgba(76,215,246,0.3)] shrink-0">
+          {{ (current_user.name[:2] if current_user.name else 'IN') | upper }}
+          <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-tertiary border-2 border-surface flex items-center justify-center"></span>
+        </div>
+
+        <div class="flex flex-col min-w-0">
+          <h3 class="font-headline-sm text-base sm:text-lg font-bold text-on-surface truncate">{{ current_user.name }}</h3>
+          <span class="font-label-telemetry-sm text-xs text-primary font-semibold">NIM / ID: {{ current_user.identity_number or current_user.username }}</span>
+          <span class="font-body-sm text-xs text-on-surface-variant truncate">{{ current_user.institution or 'Peserta Magang & PKL' }}</span>
+        </div>
+      </div>
+
+      <!-- Detail Credentials Grid -->
+      <div class="grid grid-cols-2 gap-2.5 pt-2">
+        <div class="p-3 rounded-2xl bg-surface-container-lowest/70 border border-white/5 flex flex-col gap-0.5">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Divisi Penempatan</span>
+          <span class="font-headline-sm text-xs font-semibold text-on-surface truncate">
+            {{ current_user.internship.division if current_user.internship and current_user.internship.division else (current_user.department or 'Umum / Engineering') }}
+          </span>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-surface-container-lowest/70 border border-white/5 flex flex-col gap-0.5">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Pembimbing / Supervisor</span>
+          <span class="font-headline-sm text-xs font-semibold text-on-surface truncate">
+            {{ current_user.internship.supervisor if current_user.internship and current_user.internship.supervisor else 'Mentor Divisi' }}
+          </span>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-surface-container-lowest/70 border border-white/5 flex flex-col gap-0.5">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Email Resmi</span>
+          <span class="font-body-sm text-xs font-medium text-on-surface truncate">
+            {{ current_user.email }}
+          </span>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-surface-container-lowest/70 border border-white/5 flex flex-col gap-0.5">
+          <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase">Kontak / Telepon</span>
+          <span class="font-body-sm text-xs font-medium text-on-surface truncate">
+            {{ current_user.phone or '-' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Periode Magang Bar -->
+      <div class="p-3 rounded-2xl bg-surface-container-high/40 border border-white/10 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-[18px]">calendar_today</span>
+          <span class="text-on-surface-variant">Periode Pelaksanaan:</span>
+        </div>
+        <span class="font-label-telemetry-sm text-on-surface font-semibold">
+          {% if current_user.internship and current_user.internship.start_date and current_user.internship.end_date %}
+            {{ current_user.internship.start_date.strftime('%d/%m/%Y') }} — {{ current_user.internship.end_date.strftime('%d/%m/%Y') }}
+          {% else %}
+            Semester Aktif 2024/2025
+          {% endif %}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Performance Summary Card -->
+  <section class="p-4 rounded-3xl glass-panel shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-tertiary-container/30 border border-tertiary/40 flex items-center justify-center text-tertiary">
+        <span class="material-symbols-outlined text-xl">analytics</span>
+      </div>
+      <div>
+        <h4 class="font-headline-sm text-xs sm:text-sm font-semibold text-on-surface">Tingkat Disiplin Kehadiran</h4>
+        <span class="font-label-telemetry-sm text-[10px] text-on-surface-variant">Tercatat {{ total_attendances }} hari absensi</span>
+      </div>
+    </div>
+    <div class="text-right">
+      <span class="font-display-hero-mobile text-xl font-bold text-tertiary">{{ attendance_rate }}%</span>
+    </div>
+  </section>
+
+  <!-- Security & Logout Action -->
+  <section class="p-4 rounded-3xl glass-panel shadow-[0_10px_30px_rgba(0,0,0,0.5)] flex flex-col gap-3">
+    <h4 class="font-headline-sm text-xs sm:text-sm font-semibold text-on-surface">Keamanan Akun</h4>
+    <p class="text-xs text-on-surface-variant">
+      Akun ini dilindungi enkripsi PBKDF2:SHA256 dengan geofencing radius aktif.
+    </p>
+
+    <form method="post" action="{{ url_for('auth.logout') }}" class="pt-1">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="w-full py-2.5 rounded-xl bg-error/15 hover:bg-error/25 border border-error/30 text-error font-headline-sm text-xs sm:text-sm font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
+        <span class="material-symbols-outlined text-[18px]">logout</span>
+        Keluar dari Sesi Magang
+      </button>
+    </form>
+  </section>
+
 </div>
-<div class="card card-soft"><div class="card-body">
-  <p class="mb-1"><strong>Nama:</strong> {{ current_user.name }}</p>
-  <p class="mb-1"><strong>Email:</strong> {{ current_user.email }}</p>
-  <p class="mb-1"><strong>Username:</strong> {{ current_user.username }}</p>
-  <p class="mb-0"><strong>Instansi:</strong> {{ current_user.institution or '-' }}</p>
-</div></div>
 {% endblock %}

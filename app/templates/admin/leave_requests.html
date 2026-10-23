@@ -1,23 +1,66 @@
-{% extends 'base.html' %}
+{% extends 'admin/base_admin.html' %}
 {% block content %}
-<div class="page-header">
-  <h3 class="mb-1">Pengajuan Izin</h3>
-  <p class="page-subtitle">Pantau seluruh status permohonan izin peserta.</p>
-</div>
-<div class="table-responsive card card-soft p-2">
-<table class="table table-striped m-0">
-<thead><tr><th>Nama</th><th>Jenis</th><th>Periode</th><th>Status</th><th>Alasan</th></tr></thead>
-<tbody>
-{% for row in leave_requests %}
-<tr>
-  <td>{{ row.user.name }}</td>
-  <td>{{ row.request_type }}</td>
-  <td>{{ row.start_date }} s/d {{ row.end_date }}</td>
-  <td>{{ row.status }}</td>
-  <td>{{ row.reason }}</td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
+<div class="flex flex-col w-full gap-6 select-none">
+
+  <!-- Header Banner -->
+  <div class="flex items-center justify-between px-1">
+    <div>
+      <span class="font-label-telemetry-sm text-[10px] uppercase tracking-widest text-secondary font-semibold">CLEARANCE & DISPENSATION AUDIT</span>
+      <h2 class="font-headline-sm text-lg sm:text-xl font-bold text-on-surface">Monitoring Izin & Dispensasi</h2>
+    </div>
+    <span class="px-2.5 py-1 rounded-full bg-secondary-container/20 border border-secondary/30 text-secondary font-label-telemetry-sm text-[10px] font-semibold">
+      {{ leave_requests|length }} Permohonan
+    </span>
+  </div>
+
+  <!-- Table Stream -->
+  <section class="w-full overflow-x-auto rounded-3xl glass-panel shadow-2xl">
+    <table class="w-full text-left border-collapse text-xs">
+      <thead>
+        <tr class="bg-surface-container-high/60 font-label-telemetry-sm text-[10px] text-on-surface-variant uppercase tracking-wider border-b border-white/10">
+          <th class="py-3.5 px-5">Nama Peserta</th>
+          <th class="py-3.5 px-4">Jenis Dispensasi</th>
+          <th class="py-3.5 px-4">Periode Tanggal</th>
+          <th class="py-3.5 px-4">Status</th>
+          <th class="py-3.5 px-5">Alasan Keterangan</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-white/5 font-body-sm">
+        {% if leave_requests %}
+          {% for row in leave_requests %}
+            <tr class="hover:bg-surface-container-high/40 transition-colors">
+              <td class="py-3.5 px-5 font-semibold text-on-surface">
+                {{ row.user.name }}
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="font-label-telemetry-sm text-xs font-bold text-primary">
+                  {{ row.request_type | replace('_', ' ') }}
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-on-surface font-label-telemetry-sm">
+                {{ row.start_date.strftime('%d/%m/%Y') }} s/d {{ row.end_date.strftime('%d/%m/%Y') }}
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold font-label-telemetry-sm border {% if row.status == 'APPROVED' %}bg-tertiary-container/30 border-tertiary/40 text-tertiary{% elif row.status == 'REJECTED' %}bg-error-container/40 border-error/40 text-error{% else %}bg-secondary-container/30 border-secondary/40 text-secondary{% endif %}">
+                  <span class="w-1.5 h-1.5 rounded-full {% if row.status == 'APPROVED' %}bg-tertiary{% elif row.status == 'REJECTED' %}bg-error{% else %}bg-secondary{% endif %}"></span>
+                  {{ row.status }}
+                </span>
+              </td>
+              <td class="py-3.5 px-5 text-on-surface-variant max-w-sm truncate">
+                {{ row.reason }}
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="5" class="py-8 text-center text-on-surface-variant text-xs">
+              Belum ada data permohonan izin atau dispensasi.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </section>
+
 </div>
 {% endblock %}

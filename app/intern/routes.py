@@ -2,12 +2,12 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
-from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 
 from app.extensions import db
-from app.models import Attendance, LeaveRequest
+from app.models import Attendance, LeaveRequest, Zone
 from app.utils.attendance_service import check_in, check_out, get_effective_setting
 from app.utils.audit import log_action
 from app.utils.decorators import role_required
@@ -31,11 +31,46 @@ def dashboard():
     today = now_in_tz(setting.timezone).date()
     today_attendance = Attendance.query.filter_by(user_id=current_user.id, date=today).first()
 
+    recent_attendances = (
+        Attendance.query.filter_by(user_id=current_user.id)
+        .order_by(Attendance.date.desc())
+        .limit(7)
+        .all()
+    )
+
+    total_records = Attendance.query.filter_by(user_id=current_user.id).count()
+    ontime_count = Attendance.query.filter(
+        Attendance.user_id == current_user.id,
+        Attendance.status.in_(["HADIR", "TEPAT_WAKTU"]),
+    ).count()
+    late_count = Attendance.query.filter_by(user_id=current_user.id, status="TERLAMBAT").count()
+    attendance_rate = (
+        round((ontime_count + late_count) / max(total_records, 1) * 100)
+        if total_records > 0
+        else 100
+    )
+
+    approved_leaves = LeaveRequest.query.filter(
+        LeaveRequest.user_id == current_user.id,
+        LeaveRequest.status == "APPROVED",
+    ).count()
+
+    zones = Zone.query.filter_by(is_active=True).all()
+    primary_zone = zones[0] if zones else None
+
     return render_template(
         "intern/dashboard.html",
         today_attendance=today_attendance,
+        setting=setting,
         check_in_time=setting.check_in_time,
         check_out_time=setting.check_out_time,
+        recent_attendances=recent_attendances,
+        attendance_rate=attendance_rate,
+        late_count=late_count,
+        approved_leaves=approved_leaves,
+        total_records=total_records,
+        zones=zones,
+        primary_zone=primary_zone,
     )
 
 
@@ -43,16 +78,35 @@ def dashboard():
 @role_required("INTERN")
 def attendance_page():
     setting = get_effective_setting()
-    return render_template("intern/attendance.html", setting=setting)
+    today = now_in_tz(setting.timezone).date()
+    today_attendance = Attendance.query.filter_by(user_id=current_user.id, date=today).first()
+    zones = Zone.query.filter_by(is_active=True).all()
+    primary_zone = zones[0] if zones else None
+
+    return render_template(
+        "intern/attendance.html",
+        setting=setting,
+        today_attendance=today_attendance,
+        zones=zones,
+        primary_zone=primary_zone,
+    )
 
 
 @intern_bp.route("/attendance/check-in", methods=["POST"])
 @role_required("INTERN")
 def do_check_in():
-    lat = float(request.form.get("latitude", "0"))
-    lng = float(request.form.get("longitude", "0"))
+    data = request.get_json(silent=True) or request.form
+    try:
+        lat = float(data.get("latitude", "0") or 0)
+        lng = float(data.get("longitude", "0") or 0)
+    except (ValueError, TypeError):
+        lat = 0.0
+        lng = 0.0
 
     ok, message = check_in(current_user, lat, lng)
+    if request.is_json:
+        return jsonify({"success": ok, "message": message}), (200 if ok else 400)
+
     flash(message, "success" if ok else "danger")
     return redirect(url_for("intern.dashboard"))
 
@@ -60,10 +114,18 @@ def do_check_in():
 @intern_bp.route("/attendance/check-out", methods=["POST"])
 @role_required("INTERN")
 def do_check_out():
-    lat = float(request.form.get("latitude", "0"))
-    lng = float(request.form.get("longitude", "0"))
+    data = request.get_json(silent=True) or request.form
+    try:
+        lat = float(data.get("latitude", "0") or 0)
+        lng = float(data.get("longitude", "0") or 0)
+    except (ValueError, TypeError):
+        lat = 0.0
+        lng = 0.0
 
     ok, message = check_out(current_user, lat, lng)
+    if request.is_json:
+        return jsonify({"success": ok, "message": message}), (200 if ok else 400)
+
     flash(message, "success" if ok else "danger")
     return redirect(url_for("intern.dashboard"))
 
@@ -78,14 +140,33 @@ def history():
     query = Attendance.query.filter_by(user_id=current_user.id)
 
     if month:
-        query = query.filter(db.extract("month", Attendance.date) == int(month))
+        try:
+            query = query.filter(db.extract("month", Attendance.date) == int(month))
+        except (ValueError, TypeError):
+            pass
     if year:
-        query = query.filter(db.extract("year", Attendance.date) == int(year))
+        try:
+            query = query.filter(db.extract("year", Attendance.date) == int(year))
+        except (ValueError, TypeError):
+            pass
     if status:
         query = query.filter(Attendance.status == status)
 
     rows = query.order_by(Attendance.date.desc()).all()
-    return render_template("intern/history.html", attendances=rows)
+    total_count = len(rows)
+    hadir_count = sum(1 for r in rows if r.status in ["HADIR", "TEPAT_WAKTU"])
+    telat_count = sum(1 for r in rows if r.status == "TERLAMBAT")
+
+    return render_template(
+        "intern/history.html",
+        attendances=rows,
+        selected_month=month,
+        selected_year=year,
+        selected_status=status,
+        total_count=total_count,
+        hadir_count=hadir_count,
+        telat_count=telat_count,
+    )
 
 
 @intern_bp.route("/leave", methods=["GET", "POST"])
@@ -150,4 +231,22 @@ def leave():
 @intern_bp.route("/profile")
 @role_required("INTERN")
 def profile():
-    return render_template("intern/profile.html")
+    setting = get_effective_setting()
+    total_attendances = Attendance.query.filter_by(user_id=current_user.id).count()
+    ontime_count = Attendance.query.filter(
+        Attendance.user_id == current_user.id,
+        Attendance.status.in_(["HADIR", "TEPAT_WAKTU"]),
+    ).count()
+    late_count = Attendance.query.filter_by(user_id=current_user.id, status="TERLAMBAT").count()
+    attendance_rate = (
+        round((ontime_count + late_count) / max(total_attendances, 1) * 100)
+        if total_attendances > 0
+        else 100
+    )
+    return render_template(
+        "intern/profile.html",
+        setting=setting,
+        total_attendances=total_attendances,
+        attendance_rate=attendance_rate,
+        late_count=late_count,
+    )
